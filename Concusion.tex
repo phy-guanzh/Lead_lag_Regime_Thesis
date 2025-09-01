@@ -1,0 +1,37 @@
+%% ----------------------------------------------------------------
+%% Chapter 6 — Conclusion
+%% ----------------------------------------------------------------
+\chapter{Conclusion}\label{Chapter:Conclusion}
+
+This dissertation studied how \emph{path-wise} information, extracted via signature methods, can be used to detect market regimes in a strictly walk–forward manner and to improve the performance of a signature-based lead–lag hedge. Starting from daily BTC prices (\sampleStart{}–\sampleEnd{}), we constructed backward-looking regime labels using a signature–kernel MMD on rolling path groups (Sections~\ref{sec:regime-detection}–\ref{sec:wfstrict}) and combined them with a rolling signature-based lead–lag matrix over a cross-section of assets (Section~\ref{sec:leadlag}). We then overlaid the baseline hedge (long followers / short leaders) with regime-aware basket selection keyed to a BTC anchor relation while preserving the hedge structure (Section~\ref{sec:regime}).
+
+\section*{Summary of Findings}
+Across strict walk–forward experiments aligned from signal day to next trading day, the regime-aware overlay materially improved the risk–return profile relative to the baseline at the same market participation rate:
+\begin{itemize}
+  \item \textbf{Higher return with lower risk.} Cumulative return increased from 59.53\% to 132.78\%; Sharpe rose from 0.58 to 1.46 and Sortino from 0.90 to 2.46, while annualised volatility fell from 38.09\% to 20.06\% (Table~\ref{tab:main}).
+  \item \textbf{Shallower and shorter drawdowns.} Max drawdown improved from --35.32\% to --14.15\%, and days under water roughly halved (495 to 238; Table~\ref{tab:diag_dd}).
+  \item \textbf{Consistency with variation.} Year-by-year results show outperformance in three of four years (2021, 2023, 2024 YTD) and a mild shortfall in 2022 (Table~\ref{tab:eoy}), consistent with the overlay adding most value around misalignment and regime turns.
+  \item \textbf{Parameter regularities.} Shorter path windows with more stacked subpaths (\(n_{\text{steps}}{=}5\), \(n_{\text{paths}}\in\{16,20\}\)) were most effective, indicating a useful bias–variance balance (Table~\ref{tab:top5_sharpe_params}).
+  \item \textbf{Cost-aware viability.} With turnover computed from target weight changes, the baseline breaks even around 5–10 bps/side, whereas the top overlay configuration remains attractive at 5–10 bps but degrades beyond 25 bps (Tables~\ref{tab:baseline_tc}–\ref{tab:tc_sensitivity_reduced}).
+\end{itemize}
+
+\section*{Interpretation}
+The key mechanism is \emph{state-conditioned selection}. The overlay does not increase time in market (43\% in both strategies) or gross exposure; instead, it routes names within the long/short baskets according to the signed lead–lag relation with the BTC anchor and the detected regime. In bull states, co-moving names are favoured; in bear states, signs are flipped; in neutral states, exposure is scaled. This conditional routing reduces whipsaws and left-tail losses while preserving the hedge.
+
+\section*{Contributions}
+Methodologically and empirically, the dissertation offers:
+\begin{enumerate}
+  \item A strictly walk–forward regime detector based on signature–kernel MMD over rolling path groups, with medoid-based semantic mapping to bull/neutral/bear labels that avoids look-ahead.
+  \item A signature-based lead–lag matrix that captures directional, order-sensitive dependence beyond linear correlation, coupled with a simple, reproducible baseline hedge.
+  \item A \emph{regime-aware overlay} that preserves the hedge while using an anchor-signed relation to gate long/short baskets, improving risk control at unchanged participation.
+  \item A transparent evaluation protocol (signal-to-execution alignment, unified daily calendar, turnover-based cost model) with diagnostics for drawdowns, yearly performance, and parameter sensitivity.
+\end{enumerate}
+
+\section*{Limitations (Brief)}
+The conclusions are bounded by the daily sample window (\sampleStart{}–\sampleEnd{}) and a BTC-centric single-anchor design; external validity to other periods or asset classes is not guaranteed. Kernel and clustering hyperparameters were fixed rather than tuned via nested walk–forward cross-validation, and the unbiased MMD can be high-variance for small eligible sets. Label construction via rolling votes introduces lag around turning points. The row-mean leadership score compresses pairwise uncertainty, and lag maximisation may overfit short windows. Finally, transaction costs, funding/borrow, and market impact are modelled parsimoniously; net performance depends on venue frictions.
+
+\section*{Outlook}
+Several extensions are promising. Multi-asset regimes that estimate a global state from joint path geometry—optionally with hierarchical asset- or sector-level states—could generalise the single-anchor design. Probabilistic (soft) regimes would allow exposure scaling by confidence. Cost-aware portfolio construction (e.g., turnover-penalised optimisation) and uncertainty-aware throttling could harden out-of-sample performance. Scalability can be improved with kernel approximations and streaming clustering. Broadening horizons (pre-2021 history, intraday data) would test temporal and frequency robustness.
+
+\section*{Closing Remarks}
+Overall, the evidence indicates that path-wise regime information can be combined with directional lead–lag structure to produce a \emph{regime-aware hedge} that is more resilient and capital efficient than a purely unconditional alternative. The approach is modular—path features, regime mapping, and portfolio rules can be swapped independently—and provides a practical template for integrating modern geometric time-series tools into risk-managed trading.
