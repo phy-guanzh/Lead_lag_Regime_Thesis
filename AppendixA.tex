@@ -1,0 +1,198 @@
+%% ----------------------------------------------------------------
+%% AppendixA.tex
+%% ---------------------------------------------------------------- 
+\begin{longtable}{@{}rll@{}}
+\caption{Asset list with full names and tickers}\label{tab:assets}\\
+\toprule
+No. & Full name & Ticker \\
+\midrule
+\endfirsthead
+\toprule
+No. & Full name & Ticker \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+
+1  & Oasis Network        & \texttt{ROSE} \\
+2  & Ankr                 & \texttt{ANKR} \\
+3  & VeChain              & \texttt{VET} \\
+4  & NEAR Protocol        & \texttt{NEAR} \\
+5  & Ethereum             & \texttt{ETH} \\
+6  & EOS                  & \texttt{EOS} \\
+7  & BakeryToken          & \texttt{BAKE} \\
+8  & The Graph            & \texttt{GRT} \\
+9  & Reef                 & \texttt{REEF} \\
+10 & Injective            & \texttt{INJ} \\
+11 & Filecoin             & \texttt{FIL} \\
+12 & Polygon              & \texttt{MATIC} \\
+13 & Bitcoin Cash         & \texttt{BCH} \\
+14 & IOST                 & \texttt{IOST} \\
+15 & Chromia              & \texttt{CHR} \\
+16 & MultiversX           & \texttt{EGLD} \\
+17 & Hedera               & \texttt{HBAR} \\
+18 & Zilliqa              & \texttt{ZIL} \\
+19 & Algorand             & \texttt{ALGO} \\
+20 & Dent                 & \texttt{DENT} \\
+21 & Dash                 & \texttt{DASH} \\
+22 & My Neighbor Alice    & \texttt{ALICE} \\
+23 & IOTA                 & \texttt{IOTA} \\
+24 & Chainlink            & \texttt{LINK} \\
+25 & Tezos                & \texttt{XTZ} \\
+26 & Loopring             & \texttt{LRC} \\
+27 & Harmony              & \texttt{ONE} \\
+28 & Solar                & \texttt{SXP} \\
+29 & Kava                 & \texttt{KAVA} \\
+30 & Axie Infinity        & \texttt{AXS} \\
+31 & Cardano              & \texttt{ADA} \\
+32 & Solana               & \texttt{SOL} \\
+33 & Ontology             & \texttt{ONT} \\
+34 & Ethereum Classic     & \texttt{ETC} \\
+35 & Decentraland         & \texttt{MANA} \\
+36 & Synthetix            & \texttt{SNX} \\
+37 & Zcash                & \texttt{ZEC} \\
+38 & Conflux              & \texttt{CFX} \\
+39 & Yearn Finance        & \texttt{YFI} \\
+40 & Waves                & \texttt{WAVES} \\
+41 & Litecoin             & \texttt{LTC} \\
+42 & Chiliz               & \texttt{CHZ} \\
+43 & Stellar              & \texttt{XLM} \\
+44 & COTI                 & \texttt{COTI} \\
+45 & Polkadot             & \texttt{DOT} \\
+46 & OMG Network          & \texttt{OMG} \\
+47 & SushiSwap            & \texttt{SUSHI} \\
+48 & Fantom               & \texttt{FTM} \\
+49 & BNB                  & \texttt{BNB} \\
+50 & Uniswap              & \texttt{UNI} \\
+51 & Stacks               & \texttt{STX} \\
+52 & THORChain            & \texttt{RUNE} \\
+53 & Theta Network        & \texttt{THETA} \\
+54 & Holo                 & \texttt{HOT} \\
+55 & 1inch                & \texttt{1INCH} \\
+56 & Fetch.ai             & \texttt{FET} \\
+57 & Kusama               & \texttt{KSM} \\
+58 & Smooth Love Potion   & \texttt{SLP} \\
+59 & Curve DAO Token      & \texttt{CRV} \\
+60 & IoTeX                & \texttt{IOTX} \\
+61 & Bitcoin              & \texttt{BTC} \\
+62 & Avalanche            & \texttt{AVAX} \\
+63 & Enjin Coin           & \texttt{ENJ} \\
+64 & PancakeSwap          & \texttt{CAKE} \\
+65 & XRP                  & \texttt{XRP} \\
+66 & TRON                 & \texttt{TRX} \\
+67 & Cosmos               & \texttt{ATOM} \\
+68 & Aave                 & \texttt{AAVE} \\
+69 & Dogecoin             & \texttt{DOGE} \\
+70 & Neo                  & \texttt{NEO} \\
+71 & The Sandbox          & \texttt{SAND} \\
+72 & Qtum                 & \texttt{QTUM} \\
+\end{longtable}
+
+% Notation
+% D in R^{G x G}, symmetric; t_i end times; raw boundary t_train^raw; horizon H
+% Safe boundary: t_train^safe = t_train^raw - H
+\iffalse
+\textbf{Training set:}\quad
+I_{\text{train}} = \{\, i : t_i \le t_{\text{train}}^{\text{safe}} \,\}.
+
+\textbf{Clustering \& medoids:}\quad
+\text{Cluster } D[I_{\text{train}}, I_{\text{train}}] \to \{C_k\}_{k=1}^K,\quad
+m_k = \arg\min_{j \in C_k} \sum_{i \in C_k} D_{ij}.
+
+\textbf{Forward return (H steps) for } i \in C_k:\quad
+r_H(i) = \frac{P(t_i + H) - P(t_i)}{P(t_i)}.
+
+\textbf{Discrete direction:}\quad
+\mathrm{dir}(i) =
+\begin{cases}
+\text{Bull}, & r_H(i) \ge \tau_{\text{pos}},\\
+\text{Bear}, & r_H(i) \le -\tau_{\text{neg}},\\
+\text{Sideways}, & \text{otherwise.}
+\end{cases}
+
+\textbf{Cluster semantic (majority vote):}\quad
+L_k \in \{\text{Bear, Sideways, Bull}\}
+\text{ from } \{\mathrm{dir}(i): i \in C_k\}.
+\text{ (Tie-break by sign of } \overline{r_H} \text{ or medoid’s label.)}
+
+\textbf{Prototype dictionary:}\quad
+\mathcal{M} = \{(m_k, L_k)\}_{k=1}^K.
+
+\textbf{Assignment on all groups:}\quad
+c(g) = \arg\min_k D_{g, m_k}, \qquad
+\widehat{\mathrm{dir}}(g) = L_{c(g)}.
+
+\textbf{Rolling vote (optional):}\quad
+\widetilde{\mathrm{dir}}(g) = \operatorname{mode}\big(\widehat{\mathrm{dir}}(g-k_{\text{vote}}+1),\dots,\widehat{\mathrm{dir}}(g)\big).
+
+\textbf{Daily mapping:}\quad
+\text{Expand group labels over their date spans to obtain a daily series.}
+
+\textbf{No-leakage:}\quad
+\text{Only use } i \text{ with } t_i + H \le t_{\text{train}}^{\text{raw}}.
+\text{ Equivalently, } t_{\text{train}}^{\text{safe}} = t_{\text{train}}^{\text{raw}} - H.
+\fi
+
+\section{Signature Theory}
+
+The signature of a path is a mathematical object that originates from rough path theory (Lyons, 1998). 
+Given a $d$-dimensional continuous path $X : [0,T] \to \mathbb{R}^d$, the signature is defined as the infinite collection of \emph{iterated integrals} of the path: 
+\[
+S(X) = \left( 1, S^{(1)}(X), S^{(2)}(X), S^{(3)}(X), \dots \right),
+\]
+where the $k$-th level signature term is
+\[
+S^{(k)}(X) = \int_{0 < t_1 < \cdots < t_k < T} dX_{t_1} \otimes dX_{t_2} \otimes \cdots \otimes dX_{t_k}.
+\]
+
+At the first level ($k=1$), the signature reduces to the net increment of the path:
+\[
+S^{(1)}(X) = X_T - X_0.
+\]
+At the second level, we obtain quadratic information that encodes the order of movements:
+\[
+S^{(2)}(X) = \int_{0 < t_1 < t_2 < T} dX_{t_1} \otimes dX_{t_2},
+\]
+which captures how one coordinate of the path leads or lags another. Higher-order terms generalise this to more complex dependencies.
+
+Two properties make the signature especially powerful. First, \textbf{Chen’s identity} guarantees that the signature of a concatenated path can be decomposed into signatures of its segments, making it suitable for sequential data. Second, under mild conditions, the \textbf{signature uniquely characterises the path} up to so-called ``tree-like'' equivalence, meaning that it retains essentially all the information of the original trajectory (Lyons, 1998; Hambly and Lyons, 2010). 
+
+Since the full signature is infinite-dimensional, in practice one truncates it at depth $m$. 
+The dimension of the truncated signature grows polynomially:
+\[
+\dim S^{\leq m}(X) = \sum_{k=0}^m d^k,
+\]
+which means that for even moderate $d$ and $m$, the feature space becomes high-dimensional. This motivates careful choices of truncation level and path embedding.
+
+
+Financial time series such as asset prices are inherently sequential and path-dependent. Traditional summary statistics---such as mean, variance, or simple autocorrelations---capture only coarse properties of the distribution. In contrast, signature features encode the order and interaction of movements at multiple scales, making them particularly suitable for detecting subtle temporal structures.  
+For example, second-order signature terms can reflect lead--lag effects between variables, while higher-order terms can characterise nonlinear dependencies that may indicate regime shifts.  
+This ability to represent paths beyond linear summary statistics makes the signature method a natural candidate for regime detection in financial markets.
+
+\subsection{Maximum Mean Discrepancy (MMD)}
+
+Once features are extracted, the problem of regime detection becomes a problem of identifying distributional changes over time. To this end, we adopt the \textbf{Maximum Mean Discrepancy (MMD)} as a non-parametric two-sample test (Gretton et al., 2012).  
+
+Given two sets of observations $X = \{x_i\}_{i=1}^n$ and $Y = \{y_j\}_{j=1}^m$ in feature space $\mathcal{X}$, the squared MMD between their distributions $P$ and $Q$ is defined as:
+\[
+\mathrm{MMD}^2(P,Q;\mathcal{H}) = \sup_{f \in \mathcal{H}, \|f\|_{\mathcal{H}} \leq 1} \left( \mathbb{E}_{x \sim P}[f(x)] - \mathbb{E}_{y \sim Q}[f(y)] \right)^2,
+\]
+where $\mathcal{H}$ is a reproducing kernel Hilbert space (RKHS).  
+
+In practice, with a kernel function $k(\cdot, \cdot)$, the unbiased empirical estimate is:
+\[
+\widehat{\mathrm{MMD}}^2(X,Y) = \frac{1}{n(n-1)} \sum_{i \neq i'} k(x_i, x_{i'}) + \frac{1}{m(m-1)} \sum_{j \neq j'} k(y_j, y_{j'}) - \frac{2}{nm} \sum_{i,j} k(x_i, y_j).
+\]
+
+If $\widehat{\mathrm{MMD}}^2$ is large, it indicates that the two sets of observations likely come from different distributions, i.e., a regime shift. The choice of kernel (e.g., Gaussian RBF) controls the sensitivity to local vs. global changes.
+
+
+
+\subsection{Construction of Distance Matrices}
+
+To perform clustering, we require a distance measure between different segments of the BTC price path. 
+The first step is \textbf{subpath extraction}. The original time series is divided into overlapping subpaths of fixed length $n_{\text{steps}}$. Each subpath represents the local dynamics of the market over a short horizon, ensuring that temporal dependencies are preserved.
+
+Next, we introduce a \textbf{grouping stage}. Instead of treating each subpath individually, we aggregate $n_{\text{paths}}$ consecutive subpaths into groups. This reduces the effect of noise and yields more stable representations of local behaviour. Each group can be regarded as a local distribution of path features.
+
+Finally, we compute \textbf{pairwise distances} between groups. After transforming each path using the signature representation, we employ a Maximum Mean Discrepancy (MMD)–based metric to quantify the distributional difference between two groups. The outcome is a symmetric distance matrix $D \in \mathbb{R}^{G \times G}$, where $G$ denotes the number of groups. This distance matrix serves as the input for subsequent clustering, enabling the identification of distinct market regimes.

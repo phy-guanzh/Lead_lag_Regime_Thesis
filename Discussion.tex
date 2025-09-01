@@ -1,0 +1,63 @@
+%% ----------------------------------------------------------------
+%% Chapter — Discussion
+%% ----------------------------------------------------------------
+\chapter{Discussion}\label{Chapter:Discussion}
+
+This chapter synthesises the empirical results and reflects on the main limitations of the study. We interpret how the regime–aware overlay affects returns, risk, and drawdowns relative to the baseline lead–lag hedge, examine robustness across years and parameterisations, and assess implementability under transaction costs. We then discuss threats to validity and methodological constraints.
+
+\section{What the Results Say}\label{sec:disc:findings}
+
+Table~\ref{tab:main} shows that the regime overlay more than doubles cumulative return (59.53\% $\to$ 132.78\%) and lifts Sharpe from 0.58 to 1.46 while \emph{time in market is identical} (43\%). Figure~\ref{fig:nav} confirms a smoother equity curve. Because participation is unchanged, the gain must come from better conditioning of long/short selections and from reducing losses in unfavourable states rather than from simply taking more risk.
+
+Drawdown diagnostics in Table~\ref{tab:diag_dd} indicate a materially shallower maximum drawdown (–35.32\% $\to$ –14.15\%) and roughly half the underwater time (495 $\to$ 238 days). The overlay’s worst episode bottoms quickly (2022-01-05) and ends by mid-2022, consistent with a mechanism that \emph{de-risks early} when the BTC–anchored regime turns adverse and re-risks when conditions improve.
+
+The overlay outperforms in three of four calendar years (Table~\ref{tab:eoy}): very strongly in 2021, reverses a negative baseline in 2023, and keeps an edge in 2024 YTD; it mildly lags in 2022 (multiplier 0.91). This pattern is consistent with the overlay adding the most value when the baseline’s directional bets are misaligned or when regime shifts are sharp; when the baseline is already well-positioned, marginal gains shrink.
+
+
+Across strict walk–forward runs, shorter path windows with more stacked subpaths (\(n_{\text{steps}}{=}5\), \(n_{\text{paths}}\in\{16,20\}\)) deliver the highest risk-adjusted performance (Table~\ref{tab:top5_sharpe_params} and Figure~\ref{fig:top5_nav_union}). Intuitively, brief path snippets capture local geometry around turning points while aggregating across many subpaths stabilises the MMD signal. Mid-length settings (e.g., \(n_{\text{steps}}{=}15\)) still improve on the baseline but with lower Sharpe.
+
+\section{Why It Works (Mechanistic View)}\label{sec:disc:mechanism}
+
+
+The baseline hedge is always long “followers” and short “leaders” by a row-mean score of the lead–lag matrix. The overlay adds \emph{state information} via regime labels derived from BTC path geometry. In bull states, it tilts toward assets that co-move positively with the anchor and away from those that invert it; in bear states it flips the sign. This conditional routing keeps the hedge structure but aligns it with the prevailing propagation direction, reducing whipsaws.
+
+Volatility falls from 38.09\% to 20.06\% (Table~\ref{tab:main}) even as CAGR rises. Much of this reduction comes from \emph{avoiding} names whose signed relation to the anchor is unfavourable for the current state; the “preserve-hedge” rule retains a short leg even in bulls, keeping gross near-constant while shifting composition.
+
+\section{Robustness and Sensitivity}\label{sec:disc:robust}
+
+Top configurations cluster around \(n_{\text{steps}}{=}5\), \(n_{\text{paths}}\in\{16,20\}\). Settings with longer steps or fewer paths generally underperform, suggesting a bias–variance trade-off: too long blurs regime transitions; too few paths increases variance of the distance estimates. The consistent outperformance across several neighbouring configurations and in multiple calendar years supports—but does not prove—robustness.
+
+
+Costs erode returns roughly in proportion to turnover. For the baseline (Table~\ref{tab:baseline_tc}), the break-even lies between 5–10 bps/side. The best overlay remains attractive at 5–10 bps (Sharpe 1.05 $\to$ 0.67) thanks to lower average turnover; beyond 25 bps, strategies become uneconomic (Table~\ref{tab:tc_sensitivity_reduced}). Practically, execution-aware throttles (e.g., skip small basket changes) or sparser rebalancing could extend viability in higher-friction venues.
+
+\section{Limitations}\label{sec:disc:limits}
+
+First, regarding sample scope and external validity, the study uses daily data from \sampleStart{} to \sampleEnd{}. Results are contingent on this episode mix (2021 bull, 2022 drawdown) and a BTC-anchored crypto-centric perspective; generalisation to other periods or asset classes is not guaranteed.
+
+Second, on the single-anchor design, regime detection relies on BTC as the sole anchor. In broader multi-asset settings, other anchors (rates, USD, oil, equity indices) can dominate spillovers. A single anchor risks omitted-state bias if leadership rotates outside crypto.
+
+Third, in terms of fixed hyperparameters and estimator variance, signature-kernel bandwidth/order/regularisation are fixed (\(\sigma{=}1\), dyadic order \(d{=}2\), \(\lambda{=}1\)). Mismatched scales can over- or under-smooth path geometry. Unbiased MMD has higher variance in small samples; with strict WF eligibility and \(H{=}30\), effective training sets can be thin.
+
+Fourth, for label construction lag and instability, daily voting over the last \(k{=}7\) completed groups reduces jitter but introduces lag; near ties can flip labels around turning points. While execution uses next-day returns, plotted regimes may appear slightly delayed.
+
+Fifth, concerning lead–lag compression, row-mean leadership scores \(s_t(i)\) compress rich pairwise information into a scalar and ignore uncertainty. Maximising over lags \(\ell\in[1,\ell_{\max}]\) can overfit windows when multiple lags are near-optimal.
+
+Sixth, with respect to data handling and frictions, winsorisation (2.5/97.5) trims extremes; some crash/liquidation dynamics may be muted. Reported headline metrics are gross of costs; net performance depends on venue fees, funding/borrow, and impact, which are not fully modelled.
+
+Finally, regarding inference and model risk, hyperparameters were chosen plausibly rather than via nested, walk-forward cross-validation; selective reporting and multiple testing can inflate performance. There is no bootstrap confidence interval for Sharpe/Sortino and no “reality check” style correction.
+
+
+\section{Practical Implications}\label{sec:disc:practice}
+
+\begin{itemize}
+\item \textbf{Use state information to route, not lever.} The overlay’s gains come from \emph{selection}, not higher exposure. Preserve the hedge while tilting composition by regime.
+\item \textbf{Prefer short steps with more paths.} \(n_{\text{steps}}{=}5\), \(n_{\text{paths}}\ge 16\) balance sensitivity and stability on this sample; neighbouring settings offer a reasonable robustness band.
+\item \textbf{Budget for costs.} Strategies remain attractive at 5–10 bps/side with turnover controls; above 25 bps they are uneconomic under the current design.
+\item \textbf{Deploy safeguards.} Add confidence filters (e.g., distance-to-medoid margins), state-dependent rebalance spacing, and turnover caps to stabilise P\&L and reduce fee drag.
+\end{itemize}
+
+\section{Outlook}\label{sec:disc:outlook}
+While this chapter focuses on results and limitations, two directions are especially promising for future work: (i) \emph{multi-asset} regimes that estimate a global state from joint path geometry and optionally hierarchical asset-specific states, and (ii) \emph{uncertainty-aware} scaling that gates gross exposure by regime confidence and throttles trades by signal variance.
+
+\section{Summary}\label{sec:disc:summary}
+The regime–aware overlay improves risk-adjusted returns chiefly by \emph{conditioning} a directional hedge on data-driven market states, yielding smaller drawdowns and faster recoveries at the same market participation. Benefits are robust across several parameterisations and most calendar years, but depend on a limited sample, fixed hyperparameters, and simplified trading assumptions. Recognising these limitations clarifies where the edge likely comes from and how to harden it for deployment.
