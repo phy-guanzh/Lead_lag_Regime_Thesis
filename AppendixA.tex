@@ -1,92 +1,7 @@
 %% ----------------------------------------------------------------
-%% AppendixA.tex
+%% AppendixA.tex — revised tone (British English, no citations)
 %% ---------------------------------------------------------------- 
-\begin{longtable}{@{}rll@{}}
-\caption{Asset list with full names and tickers}\label{tab:assets}\\
-\toprule
-No. & Full name & Ticker \\
-\midrule
-\endfirsthead
-\toprule
-No. & Full name & Ticker \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
-
-1  & Oasis Network        & \texttt{ROSE} \\
-2  & Ankr                 & \texttt{ANKR} \\
-3  & VeChain              & \texttt{VET} \\
-4  & NEAR Protocol        & \texttt{NEAR} \\
-5  & Ethereum             & \texttt{ETH} \\
-6  & EOS                  & \texttt{EOS} \\
-7  & BakeryToken          & \texttt{BAKE} \\
-8  & The Graph            & \texttt{GRT} \\
-9  & Reef                 & \texttt{REEF} \\
-10 & Injective            & \texttt{INJ} \\
-11 & Filecoin             & \texttt{FIL} \\
-12 & Polygon              & \texttt{MATIC} \\
-13 & Bitcoin Cash         & \texttt{BCH} \\
-14 & IOST                 & \texttt{IOST} \\
-15 & Chromia              & \texttt{CHR} \\
-16 & MultiversX           & \texttt{EGLD} \\
-17 & Hedera               & \texttt{HBAR} \\
-18 & Zilliqa              & \texttt{ZIL} \\
-19 & Algorand             & \texttt{ALGO} \\
-20 & Dent                 & \texttt{DENT} \\
-21 & Dash                 & \texttt{DASH} \\
-22 & My Neighbor Alice    & \texttt{ALICE} \\
-23 & IOTA                 & \texttt{IOTA} \\
-24 & Chainlink            & \texttt{LINK} \\
-25 & Tezos                & \texttt{XTZ} \\
-26 & Loopring             & \texttt{LRC} \\
-27 & Harmony              & \texttt{ONE} \\
-28 & Solar                & \texttt{SXP} \\
-29 & Kava                 & \texttt{KAVA} \\
-30 & Axie Infinity        & \texttt{AXS} \\
-31 & Cardano              & \texttt{ADA} \\
-32 & Solana               & \texttt{SOL} \\
-33 & Ontology             & \texttt{ONT} \\
-34 & Ethereum Classic     & \texttt{ETC} \\
-35 & Decentraland         & \texttt{MANA} \\
-36 & Synthetix            & \texttt{SNX} \\
-37 & Zcash                & \texttt{ZEC} \\
-38 & Conflux              & \texttt{CFX} \\
-39 & Yearn Finance        & \texttt{YFI} \\
-40 & Waves                & \texttt{WAVES} \\
-41 & Litecoin             & \texttt{LTC} \\
-42 & Chiliz               & \texttt{CHZ} \\
-43 & Stellar              & \texttt{XLM} \\
-44 & COTI                 & \texttt{COTI} \\
-45 & Polkadot             & \texttt{DOT} \\
-46 & OMG Network          & \texttt{OMG} \\
-47 & SushiSwap            & \texttt{SUSHI} \\
-48 & Fantom               & \texttt{FTM} \\
-49 & BNB                  & \texttt{BNB} \\
-50 & Uniswap              & \texttt{UNI} \\
-51 & Stacks               & \texttt{STX} \\
-52 & THORChain            & \texttt{RUNE} \\
-53 & Theta Network        & \texttt{THETA} \\
-54 & Holo                 & \texttt{HOT} \\
-55 & 1inch                & \texttt{1INCH} \\
-56 & Fetch.ai             & \texttt{FET} \\
-57 & Kusama               & \texttt{KSM} \\
-58 & Smooth Love Potion   & \texttt{SLP} \\
-59 & Curve DAO Token      & \texttt{CRV} \\
-60 & IoTeX                & \texttt{IOTX} \\
-61 & Bitcoin              & \texttt{BTC} \\
-62 & Avalanche            & \texttt{AVAX} \\
-63 & Enjin Coin           & \texttt{ENJ} \\
-64 & PancakeSwap          & \texttt{CAKE} \\
-65 & XRP                  & \texttt{XRP} \\
-66 & TRON                 & \texttt{TRX} \\
-67 & Cosmos               & \texttt{ATOM} \\
-68 & Aave                 & \texttt{AAVE} \\
-69 & Dogecoin             & \texttt{DOGE} \\
-70 & Neo                  & \texttt{NEO} \\
-71 & The Sandbox          & \texttt{SAND} \\
-72 & Qtum                 & \texttt{QTUM} \\
-\end{longtable}
+% in preamble:
 
 % Notation
 % D in R^{G x G}, symmetric; t_i end times; raw boundary t_train^raw; horizon H
@@ -132,67 +47,280 @@ c(g) = \arg\min_k D_{g, m_k}, \qquad
 \text{Only use } i \text{ with } t_i + H \le t_{\text{train}}^{\text{raw}}.
 \text{ Equivalently, } t_{\text{train}}^{\text{safe}} = t_{\text{train}}^{\text{raw}} - H.
 \fi
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 
-\section{Signature Theory}
+%========================
+% APPENDIX: THEORETICAL EXTENSIONS
+%========================
 
-The signature of a path is a mathematical object that originates from rough path theory (Lyons, 1998). 
-Given a $d$-dimensional continuous path $X : [0,T] \to \mathbb{R}^d$, the signature is defined as the infinite collection of \emph{iterated integrals} of the path: 
+\chapter{Theoretical Appendix}
+
+\section{Signature Features for Time Series}
+
+\subsection{Definition of Path Signature}
+Consider a continuous path $X: [a,b] \to \mathbb{R}^d$; for example, a multivariate time series. The \emph{signature} of $X$ over $[a,b]$, written $S(X)_{a,b}$, is the (formal) infinite collection of iterated integrals on that interval. Formally, the signature lives in the tensor algebra $T((\mathbb{R}^d)) = \{1, \mathbb{R}^d, (\mathbb{R}^d)^{\otimes 2}, \dots\}$ and consists of:
+\begin{itemize}
+    \item \textbf{Level 0:} a scalar $1$ (by convention).
+    \item \textbf{Level 1:} component-wise increments $\int_a^b dX_t^{(i)}$ for $i=1,\dots,d$.
+    \item \textbf{Level 2:} double iterated integrals $\int_a^b \int_a^{t_2} dX_{t_1}^{(i)} \otimes dX_{t_2}^{(j)}$.
+    \item \textbf{Higher levels:} $k$-fold iterated integrals for $k=3,4,\dots$
+\end{itemize}
+In abbreviated form,
 \[
-S(X) = \left( 1, S^{(1)}(X), S^{(2)}(X), S^{(3)}(X), \dots \right),
+S(X)_{a,b} = \Big(1,\;\int_a^b dX_t,\;\int_a^b\!\int_a^{t_2} dX_{t_1}\otimes dX_{t_2},\;\dots\Big).
 \]
-where the $k$-th level signature term is
+These integrals encode the shape of the path. Many readers view the signature as a “Taylor series for paths”. It provides a principled expansion that captures ordered interactions in sequential data.
+
+\subsection{Truncation and Dimensionality}
+The full signature is infinite. In practice, we truncate at level $m$ to obtain a finite vector. The truncated signature $S^{(m)}(X)_{a,b}$ lies in $\bigoplus_{k=0}^m (\mathbb{R}^d)^{\otimes k}$. The dimension grows as $1 + d + d^2 + \cdots + d^m$. Therefore, $m$ trades information against computation. Low orders (for example, $m=2$ or $3$) often capture useful structure while keeping cost manageable.
+
+\subsection{Properties: Uniqueness and Chen’s Identity}
+For broad classes of paths, the untruncated signature is essentially injective up to negligible equivalences. This motivates its use as a near-universal descriptor. A key algebraic rule is \emph{Chen’s identity}. If $X$ on $[a,c]$ is split at $b$, then
 \[
-S^{(k)}(X) = \int_{0 < t_1 < \cdots < t_k < T} dX_{t_1} \otimes dX_{t_2} \otimes \cdots \otimes dX_{t_k}.
+S(X)_{a,c} \;=\; S\!\big(X^{(1)}\big)_{a,b} \otimes S\!\big(X^{(2)}\big)_{b,c}.
 \]
+Signatures are invariant under time reparametrisation. Iterated integrals also satisfy shuffle relations. These properties enable efficient computation and clean algebra.
 
-At the first level ($k=1$), the signature reduces to the net increment of the path:
+\subsection{Motivation for Use in Time Series Modelling}
+Signatures provide high-capacity, order-sensitive features. First-order terms capture cumulative trends. Second-order terms capture pairwise lead–lag effects. Higher orders encode more complex interactions. Truncation then yields a compact and algebraically convenient representation for learning.
+
+\section{Normalisation and Scaling}
+
+\subsection{Motivation in High Dimensions}
+High-dimensional features often sit on different scales. Without normalisation, distance-based methods can be dominated by large-scale coordinates. Moreover, gradient-based training may converge slowly. Normalisation improves numerical conditioning and interpretability by putting features on comparable footing.
+
+\subsection{Standard Normalisation Approaches}
+\begin{itemize}
+    \item \textbf{$z$-score normalisation:} $X' = (X-\mu_X)/\sigma_X$. After $z$-score normalisation, features have mean $0$ and unit variance.
+    \item \textbf{Min–max scaling:} $X' = \big(X-\min(X)\big)/\big(\max(X)-\min(X)\big)$ to map values to $[0,1]$.
+    \item \textbf{Rank/quantile normalisation:} map values to uniform or Gaussian quantiles. This is robust to outliers.
+    \item \textbf{Robust scaling:} $(X-\mathrm{median}(X))/\mathrm{IQR}(X)$ to mitigate extreme values.
+\end{itemize}
+
+\subsection{Impacts on Learning and Clustering}
+Normalisation speeds and stabilises gradient-based optimisation. It acts as a form of preconditioning. It also yields more sensible distance geometry for clustering. It is standard before PCA so that components reflect structure rather than scale.
+
+\section{Maximum Mean Discrepancy (MMD)}
+
+\subsection{Kernel Mean Embeddings}
+Let an RKHS have kernel $k$ and feature map $\phi$. A distribution $P$ embeds as $\mu_P := \mathbb{E}_{X\sim P}[\phi(X)]$. Hence, for any RKHS function $f$, we have $\mathbb{E}[f(X)] = \langle f,\mu_P\rangle$.
+
+\subsection{Definition of MMD}
+The MMD between $P$ and $Q$ is the RKHS distance between their mean embeddings:
 \[
-S^{(1)}(X) = X_T - X_0.
+\mathrm{MMD}_k(P,Q) = \|\mu_P - \mu_Q\|_{\mathcal H}.
 \]
-At the second level, we obtain quadratic information that encodes the order of movements:
+Equivalently,
 \[
-S^{(2)}(X) = \int_{0 < t_1 < t_2 < T} dX_{t_1} \otimes dX_{t_2},
+\mathrm{MMD}^2_k(P,Q) = \mathbb{E}_{X,X'}k(X,X') + \mathbb{E}_{Y,Y'}k(Y,Y') - 2\,\mathbb{E}_{X,Y}k(X,Y).
 \]
-which captures how one coordinate of the path leads or lags another. Higher-order terms generalise this to more complex dependencies.
+With characteristic kernels (for example, Gaussian), $\mathrm{MMD}_k(P,Q)=0$ if and only if $P=Q$.
 
-Two properties make the signature especially powerful. First, \textbf{Chen’s identity} guarantees that the signature of a concatenated path can be decomposed into signatures of its segments, making it suitable for sequential data. Second, under mild conditions, the \textbf{signature uniquely characterises the path} up to so-called ``tree-like'' equivalence, meaning that it retains essentially all the information of the original trajectory (Lyons, 1998; Hambly and Lyons, 2010). 
+\subsection{Two-Sample Testing with MMD}
+Suppose samples $\{x_i\}_{i=1}^n \sim P$ and $\{y_j\}_{j=1}^m \sim Q$. Unbiased quadratic-time estimators of $\mathrm{MMD}^2$ enable consistent two-sample tests. One may calibrate by permutation or via asymptotic approximations.
 
-Since the full signature is infinite-dimensional, in practice one truncates it at depth $m$. 
-The dimension of the truncated signature grows polynomially:
+\subsection{Characteristic and Universal Kernels}
+A kernel is \emph{characteristic} if $P \mapsto \mu_P$ is injective. Then $\mathrm{MMD}_k(P,Q)=0$ implies $P=Q$. Gaussian and Laplace kernels are key examples. Universality implies characteristicness on compact domains. Non-characteristic kernels may collapse distinct distributions to the same mean embedding.
+
+\subsection{Interpretations and Theoretical Properties}
+MMD is both a feature-space norm and an integral probability metric. In an RKHS, the maximising witness function aligns with $\mu_P - \mu_Q$. Empirical MMD concentrates to its population value under standard conditions. Random features and related tricks can reduce computational cost. The metric is differentiable and widely used in modern learning tasks.
+
+\subsection{Summary}
+MMD provides a flexible way to compare distributions via kernels. With characteristic kernels, it detects any distributional difference in the limit. It supports hypothesis testing and representation learning with clear theoretical guarantees.
+
+\section{Lead–Lag Analysis}
+
+\subsection{Temporal Ordering and Lead–Lag Relationships}
+A \emph{lead–lag relationship} is directional. Series $A$ \emph{leads} series $B$ if past values of $A$ predict future values of $B$ better than the reverse. The idea depends on temporal order, not just contemporaneous correlation.
+
+\subsection{Measuring Lead–Lag Dependencies}
+Cross-correlation offers a basic tool. Peaks at positive lags suggest “$A$ leads $B$”. Negative-lag peaks suggest the opposite. However, linear shifts may miss non-linear phase relations. Pathwise measures help here. The signed Lévy area between $(A_t,B_t)$ captures direction. The sign indicates who leads. The magnitude reflects strength. These measures detect non-linear and phase-shifted behaviour beyond simple correlation.
+
+\subsection{Construction of Lead–Lag Matrices}
+With $N$ series, we summarise all pairwise relations in an $N\times N$ matrix $L$. Entry $L_{ij}$ quantifies how much $i$ leads $j$. Usually $L_{ij}=-L_{ji}$ and $L_{ii}=0$. We may build $L$ from cross-correlation peaks, from estimated lags, or from normalised Lévy areas. Row means yield simple leadership scores. Large positive rows indicate leaders. Large negative rows indicate followers. We may also view $L$ as a directed, weighted graph and then search for communities with coherent directionality.
+
+\subsection{Statistical Significance of Lead–Lag Effects}
+We should test for significance. Permutation or time-shift tests create null distributions. If an observed $L_{ij}$ is extreme under the null, we treat it as significant. Frequency-domain methods also help. Phase leads in specific bands can reveal structured directionality.
+
+\subsection{Summary}
+Lead–lag analysis uncovers directed temporal dependence. Matrices or networks summarise the system. Scores and clustering then reveal leaders, followers, and group structure. The approach aids studies of causality and information flow in many domains.
+
+\section{Clustering Based on Distance Matrices}
+
+\subsection{Pairwise Distance Matrices}
+Some clustering methods work only with pairwise dissimilarities. Given $n$ objects, we compute an $n\times n$ distance matrix $D$ with entries $D_{ij}=\mathrm{dist}(X_i,X_j)$. The distance may be any suitable metric or dissimilarity. Algorithms then use $D$ directly. Coordinates are optional. Classical agglomerative hierarchical clustering can be phrased entirely in terms of $D$. We compute $D$, start with singletons, merge the closest clusters, update inter-cluster distances by a chosen linkage, and continue to one cluster.
+
+\subsection{Types of Distance Metrics}
+The metric matters.
+\begin{itemize}
+    \item \textbf{Euclidean distance:} for vectors in $\mathbb{R}^d$, $D_{ij}=\|x_i-x_j\|_2$. It is intuitive, but may suffer from concentration in very high dimensions. Manhattan and other Minkowski variants are alternatives.
+    \item \textbf{Kernel-induced distance:} if $k$ is a positive-definite kernel,
+    \[
+      D_{ij}=\sqrt{k(x_i,x_i)+k(x_j,x_j)-2k(x_i,x_j)}\,,
+    \]
+    which equals the Euclidean distance between feature maps. This supports flexible, implicit embeddings.
+    \item \textbf{Distributional distances (e.g. MMD):} when points are distributions or complex objects, we can define $D_{ij}=\mathrm{MMD}(P_i,P_j)$. Other choices include edit distance for strings, DTW for time series, and graph distances for networks.
+\end{itemize}
+
+\subsection{Clustering Algorithms Using Distance Matrices}
+Two prominent approaches rely on distance or similarity matrices. They are hierarchical clustering and spectral clustering.
+
+\subsubsection{Hierarchical Clustering}
+Hierarchical clustering may be agglomerative (bottom–up) or divisive (top–down). In the agglomerative case, we begin with the full distance matrix. Each point is its own cluster. At each step, we merge the two closest clusters according to the current matrix. The cluster–cluster distance depends on the linkage choice. Common options are single, complete, and average linkage.
+
+After each merge, we update the matrix. We remove the two cluster rows and columns. We add a row and column for the merged cluster. We compute its distances to others via the chosen linkage. This iterative scheme builds a dendrogram from $n$ singletons to one all-encompassing cluster.
+
+The matrix is central. It drives the first merge and all later merges. The output is a multi-scale structure. We cut the tree at a chosen level to obtain a flat partition with any desired number of clusters.
+
+The method is deterministic given $D$ and the linkage rule. It is useful when we expect nested groups or when the number of clusters is unknown. It also works with any valid distance. For instance, we can cluster texts with Jaccard distance or sequences with edit distance by supplying the appropriate matrix.
+
+\subsubsection{Spectral Clustering}
+Spectral clustering treats the task as graph partitioning. We start from an affinity (similarity) matrix $A$ with entries $A_{ij}$. We may obtain $A$ from distances using a kernel transform, for example
 \[
-\dim S^{\leq m}(X) = \sum_{k=0}^m d^k,
+A_{ij}=\exp\!\Big(-\frac{\beta\,D_{ij}^2}{\sigma^2}\Big),
 \]
-which means that for even moderate $d$ and $m$, the feature space becomes high-dimensional. This motivates careful choices of truncation level and path embedding.
+with scale parameters $\beta$ and $\sigma$. This gives large weights to nearby points and near-zero weights to distant points. Normalisation often keeps affinities in a reasonable range.
 
+We then build a weighted graph with nodes as points and edges weighted by $A_{ij}$. Next, we form the graph Laplacian $L=D_{\text{deg}}-A$, where $D_{\text{deg},ii}=\sum_j A_{ij}$. We compute the first $k$ eigenvectors of $L$ (or of a normalised Laplacian). These eigenvectors embed the data into a $k$-dimensional spectral space. The embedding reflects connectivity: highly connected points receive similar spectral coordinates.
 
-Financial time series such as asset prices are inherently sequential and path-dependent. Traditional summary statistics---such as mean, variance, or simple autocorrelations---capture only coarse properties of the distribution. In contrast, signature features encode the order and interaction of movements at multiple scales, making them particularly suitable for detecting subtle temporal structures.  
-For example, second-order signature terms can reflect lead--lag effects between variables, while higher-order terms can characterise nonlinear dependencies that may indicate regime shifts.  
-This ability to represent paths beyond linear summary statistics makes the signature method a natural candidate for regime detection in financial markets.
+Finally, we cluster the spectral coordinates, typically with $k$-means, to obtain $k$ clusters. Spectral clustering thus uses distances indirectly through $A$ and the Laplacian. It performs well on non-convex structures and manifolds where hyperplane methods struggle. Conditioning matters in practice. The similarity matrix should be well behaved and not extremely skewed. Suitable kernel scales a nd normalisation help. Spectral methods usually require $k$ in advance, though heuristics exist to estimate it.
 
-\subsection{Maximum Mean Discrepancy (MMD)}
+Other algorithms also accept precomputed dissimilarities. Affinity Propagation operates on similarities and finds exemplar points. DBSCAN defines density via an $\epsilon$-neighbourhood, which depends on distances. Many libraries allow a precomputed distance matrix when Euclidean geometry is not appropriate.
 
-Once features are extracted, the problem of regime detection becomes a problem of identifying distributional changes over time. To this end, we adopt the \textbf{Maximum Mean Discrepancy (MMD)} as a non-parametric two-sample test (Gretton et al., 2012).  
+\section{Metrics and Evaluation Protocol}\label{app:metrics}
 
-Given two sets of observations $X = \{x_i\}_{i=1}^n$ and $Y = \{y_j\}_{j=1}^m$ in feature space $\mathcal{X}$, the squared MMD between their distributions $P$ and $Q$ is defined as:
+This section defines the metrics and the evaluation protocol used in Chapter~\ref{sec:results}. We keep conventions explicit and formulas short.
+
+\subsection{Calendar, alignment, and returns}
+We use the data window \sampleStart{}–\sampleEnd{}. The effective start date $t_0$ is configuration-dependent due to warm-up. We generate signals on day $t$ and execute on the next tradable day $t^+$. The daily \emph{simple} portfolio return realised on $t^+$ is
 \[
-\mathrm{MMD}^2(P,Q;\mathcal{H}) = \sup_{f \in \mathcal{H}, \|f\|_{\mathcal{H}} \leq 1} \left( \mathbb{E}_{x \sim P}[f(x)] - \mathbb{E}_{y \sim Q}[f(y)] \right)^2,
+r_t = w_{t-1}^\top R_t,
 \]
-where $\mathcal{H}$ is a reproducing kernel Hilbert space (RKHS).  
+where $w_{t-1}$ are the weights set at the close of day $t-1$ (after applying the signal from $t-1$) and $R_t$ are asset simple returns on $t$. Unless noted, the risk-free rate is $0$. Rates are decimals in computation and may be shown as percentages in tables.
 
-In practice, with a kernel function $k(\cdot, \cdot)$, the unbiased empirical estimate is:
+When comparing multiple configurations, we either report on each strategy’s own window (per-strategy $t_0$) or on the intersection-aligned window (common $t_0=\max$ across the set). We state which one we use alongside each result.
+
+\subsection{NAV, compounding, and annualisation}
+We track net asset value (NAV) by compounding simple returns:
 \[
-\widehat{\mathrm{MMD}}^2(X,Y) = \frac{1}{n(n-1)} \sum_{i \neq i'} k(x_i, x_{i'}) + \frac{1}{m(m-1)} \sum_{j \neq j'} k(y_j, y_{j'}) - \frac{2}{nm} \sum_{i,j} k(x_i, y_j).
+\mathrm{NAV}_t=\prod_{u=1}^{t}(1+r_u), \qquad \mathrm{Cumulative\ Return}=\mathrm{NAV}_T-1.
+\]
+The annualised arithmetic mean return is $\mathrm{AnnRet}=\annfac\cdot \bar r$, where $\bar r$ is the sample mean of daily returns. The compound growth rate is
+\[
+\mathrm{CAGR}=\mathrm{NAV}_T^{\annfac/T}-1.
+\]
+Annualised volatility is
+\[
+\sigma_{\mathrm{ann}}=\sqrt{\annfac}\;\mathrm{sd}(r_t).
 \]
 
-If $\widehat{\mathrm{MMD}}^2$ is large, it indicates that the two sets of observations likely come from different distributions, i.e., a regime shift. The choice of kernel (e.g., Gaussian RBF) controls the sensitivity to local vs. global changes.
+\subsection{Headline risk–return ratios}
+With risk-free $0$, the Sharpe ratio is
+\[
+\mathrm{Sharpe}=\frac{\bar r}{\mathrm{sd}(r_t)}\sqrt{\annfac}.
+\]
+The Sortino ratio uses downside deviation with target $0$:
+\[
+\sigma_{-}=\sqrt{\tfrac{1}{T}\sum_{t=1}^{T}\min(r_t,0)^2},\qquad
+\mathrm{Sortino}=\frac{\bar r}{\sigma_{-}}\sqrt{\annfac}.
+\]
+The Calmar ratio is
+\[
+\mathrm{Calmar}=\frac{\mathrm{CAGR}}{\lvert \mathrm{MaxDD}\rvert}.
+\]
+
+\subsection{Drawdowns and time statistics}
+We define running peak $P_t=\max_{u\le t}\mathrm{NAV}_u$ and drawdown $DD_t=\mathrm{NAV}_t/P_t-1$. The maximum drawdown is $\mathrm{MaxDD}=\min_t DD_t$. We record the peak date, the trough date, and the recovery date (first $u>t$ with $\mathrm{NAV}_u\ge P_t$). The \emph{longest drawdown} counts days between peak and full recovery. Time in market is the fraction of days with non-zero gross exposure:
+\[
+\mathrm{TiM}=\frac{1}{T}\sum_{t=1}^{T}\mathbbm{1}\{\|w_t\|_1>0\}.
+\]
+Active days report the count of tradable days used for each configuration.
+
+\subsection{Alpha, win rate, and rolling metrics}
+We estimate alpha versus a reference series (e.g.\ the Baseline) by
+\[
+r^{\text{str}}_t=\alpha_{\text{daily}}+\beta\,r^{\text{ref}}_t+\varepsilon_t,\qquad
+\mathrm{Alpha\ (ann)}=\annfac\cdot\hat\alpha_{\text{daily}}.
+\]
+The win rate is $\frac{1}{T}\sum_{t}\mathbbm{1}\{r_t>0\}$. Rolling statistics use a fixed window (default: $126$ trading days). Rolling Sharpe is computed from windowed $\bar r$ and $\mathrm{sd}(r_t)$ and annualised with $\annfac$.
+
+\subsection{Transaction costs and turnover}
+We model costs on target changes. Daily turnover is
+\[
+\mathrm{turnover}_t=\sum_i |w_{t,i}-w_{t-1,i}|.
+\]
+With per-side fee $c$ (in basis points), the cost is
+\[
+\mathrm{cost}_t=(c\times 10^{-4})\cdot \mathrm{turnover}_t.
+\]
+Net simple return is $r^{\text{net}}_t=r^{\text{gross}}_t-\mathrm{cost}_t$. We charge the first trade. The default is \emph{target-diff}; a \emph{full-rebalance} variant (drift offset back to equal weights) produces higher costs.
+
+\subsection{Newey--West $t$-test for the mean of daily excess returns}\label{sec:newey-west}
+We test whether the mean daily \emph{excess} return is zero. Let $\{r_t\}_{t=1}^{T}$ denote daily excess returns (gross or net of costs as stated). The null is $H_0:\mu=\mathbb{E}[r_t]=0$ against a two-sided alternative. We allow for heteroskedasticity and autocorrelation of unknown form.
+
+\paragraph{Estimator and test statistic.}
+The sample mean is $\bar r=\frac{1}{T}\sum_{t=1}^{T} r_t$. The Newey--West (HAC) variance of $\bar r$ with Bartlett weights and lag length $L$ is
+\[
+\widehat{\Var}(\bar r)
+=\frac{1}{T}\left(
+\hat\gamma_0 + 2\sum_{k=1}^{L} w_k\,\hat\gamma_k
+\right),
+\qquad
+w_k = 1-\frac{k}{L+1}\ \ (k=1,\dots,L),
+\]
+where the sample autocovariances are
+\[
+\hat\gamma_k
+=\frac{1}{T}\sum_{t=k+1}^{T} (r_t-\bar r)\,(r_{t-k}-\bar r),
+\qquad k=0,1,\dots,L.
+\]
+The Newey--West $t$-statistic for $H_0:\mu=0$ is
+\[
+\hat t_{\text{NW}}
+=\frac{\bar r}{\sqrt{\widehat{\Var}(\bar r)}}.
+\]
+Under $H_0$ and standard regularity conditions, $\hat t_{\text{NW}} \overset{d}{\to} \mathcal{N}(0,1)$, so we use normal critical values (two-sided unless stated).
+
+\paragraph{Data-driven lag length.}
+We choose the bandwidth $L$ by a data-driven rule. One convenient choice is
+\[
+L \;=\; \Big\lfloor 4\Big(\frac{T}{100}\Big)^{2/9} \Big\rfloor,
+\]
+though other automatic rules are admissible. Larger $L$ captures longer serial dependence but increases variance; the rule balances this trade-off.
 
 
+We centre and annualise point estimates separately as needed; the $t$-statistic itself is computed on daily returns. If the risk-free rate is non-zero, we form $r_t=R_t-R^{f}_t$ before applying the test. One can also report a HAC confidence interval for the mean as
+\[
+\bar r \ \pm\ z_{1-\alpha/2}\,\sqrt{\widehat{\Var}(\bar r)},
+\]
+whilst keeping moving-block bootstrap intervals for annualised return and Sharpe as a complementary, serial-dependence–aware check.
 
-\subsection{Construction of Distance Matrices}
+\subsection{Bootstrap confidence intervals}
+We form $95\%$ confidence intervals for AnnRet and Sharpe via a moving-block bootstrap (MBB).
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\item Choose block length $b=10$ and draws $B=2000$.
+\item Sample $\lceil T/b\rceil$ overlapping blocks with replacement; concatenate and trim to length $T$.
+\item Compute the statistic (AnnRet or Sharpe) on the resample using the same annualisation factor \annfac.
+\item Take the $2.5$th and $97.5$th percentiles across the $B$ replicates.
+\end{enumerate}
 
-To perform clustering, we require a distance measure between different segments of the BTC price path. 
-The first step is \textbf{subpath extraction}. The original time series is divided into overlapping subpaths of fixed length $n_{\text{steps}}$. Each subpath represents the local dynamics of the market over a short horizon, ensuring that temporal dependencies are preserved.
+\section{Model-selection bias corrections: WRC and SPA}\label{app:wrc-spa-theory}
 
-Next, we introduce a \textbf{grouping stage}. Instead of treating each subpath individually, we aggregate $n_{\text{paths}}$ consecutive subpaths into groups. This reduces the effect of noise and yields more stable representations of local behaviour. Each group can be regarded as a local distribution of path features.
+We compare many candidate rules. This creates selection bias. WRC and SPA adjust for it.
 
-Finally, we compute \textbf{pairwise distances} between groups. After transforming each path using the signature representation, we employ a Maximum Mean Discrepancy (MMD)–based metric to quantify the distributional difference between two groups. The outcome is a symmetric distance matrix $D \in \mathbb{R}^{G \times G}$, where $G$ denotes the number of groups. This distance matrix serves as the input for subsequent clustering, enabling the identification of distinct market regimes.
+\paragraph{Setup.}
+Let $d_t^{(j)}$ be the daily performance difference of strategy $j$ versus the benchmark.
+We test whether any strategy has positive expected performance relative to the benchmark.
+
+\paragraph{WRC (White’s Reality Check).}
+It builds a null where the best-looking strategy is driven by noise.
+We compute the maximal statistic over $j$, then use a stationary bootstrap on $\{d_t^{(j)}\}$ to get the null distribution.
+The $p$-value controls data snooping across the whole family.
+
+\paragraph{SPA (Hansen).}
+SPA refines the critical values using a stepwise adjustment.
+It reduces the penalty on clearly poor rules, improving power while still accounting for multiple testing.
+
+\paragraph{Interpretation.}
+A large overall $p$ means we cannot reject “no outperformance versus the benchmark”.
+Per-strategy mean differences still describe economics (e.g., bp/day), but claims of superiority must respect the overall test.

@@ -6,7 +6,16 @@
 \usepackage{natbib}   
 \usepackage{pdfpages}         % Use Natbib style for the refs.
 \usepackage{enumitem} 
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
 \usepackage{algpseudocode}
+\usepackage{bbm}
+\usepackage{amsmath}
+\DeclareMathOperator{\Var}{Var}
+
+%\usepackage{graphicx}
+%\usepackage{subcaption}
 \newcommand{\params}[2]{$n_{\text{steps}}=#1,\ n_{\text{paths}}=#2$}
 \usepackage[ruled,vlined]{algorithm2e}
 \DontPrintSemicolon
@@ -31,7 +40,7 @@
 {3-36516473}
 }
 \date       {\today}
-\supervisor {Sasan Barak}
+\supervisor {Dr. Sasan Barak}
 \examiner {}
 
 \subject    {Mathemetics}
@@ -39,9 +48,9 @@
 \maketitle
 \begin{abstract}
 
-This dissertation studies lead--lag structure in the cryptocurrency market and its use for return prediction and portfolio construction. Rolling directed lead--lag matrices are built with a signature (sequence–kernel) estimator on 30 business–day windows (update every day, maximum lag 7) after winsorizing daily returns at the 2.5/97.5\% tails. A baseline long–short hedge goes long “followers” and short “leaders” identified by row–mean scores. A strict walk–forward regime detector is then introduced: Bitcoin path groups are compared using a signature–kernel MMD distance, clustered on historical data under a visibility constraint, mapped to bear/neutral/bull, and compressed to a daily regime by a rolling vote. The trading overlay conditions the baseline by the sign of each asset’s relation to the anchor and applies a fixed neutral scaling ($\alpha=0.5$) while preserving the baseline hedge.
+This dissertation studies lead--lag structure in the cryptocurrency market and its use for return prediction and portfolio construction. Rolling directed lead--lag matrices are built with a signature estimator on 30 business–day windows (update every day, maximum lag 7) after winsorising daily returns at the 2.5/97.5\% tails. A baseline long–short hedge goes long on “followers” and short “leaders” identified by row–mean scores. A strict walk–forward regime detector is then introduced: Bitcoin path groups are compared using a signature–kernel MMD distance, clustered on historical data under a visibility constraint, mapped to bear/neutral/bull, and compressed to a daily regime by a rolling vote. The trading overlay conditions the baseline by the sign of each asset’s relation to the anchor and applies a fixed neutral scaling while preserving the baseline hedge.
 
-The dataset contains daily closes for 72 Binance–listed assets from 2021-01 to 2024-06. At the same time–in–market (43\%), the regime overlay improves headline performance relative to the baseline: cumulative return 132.8\% vs.\ 59.5\%, CAGR 31.4\% vs.\ 16.3\%, Sharpe 1.46 vs.\ 0.58, annualized volatility 20.1\% vs.\ 38.1\%, and maximum drawdown $-14.2\%$ vs.\ $-35.3\%$ (pre–costs). It outperforms in three of four calendar years and turns a negative 2023 baseline (-5.42\%) into a positive outcome (+7.79\%). Robustness checks across estimator variants and parameter settings indicate stable signals; performance declines when detection and rebalancing are less frequent, consistent with slow information diffusion. Data–driven leaders and followers show limited overlap with size/volume rankings, suggesting the structure is not a capitalization effect.
+The dataset contains daily closes for 72 Binance-listed assets from 2021-01 to 2024-06. At the same time–in–market, the regime overlay improves headline performance relative to the baseline: cumulative return 132.8\% vs.\ 59.5\%, CAGR 31.4\% vs.\ 16.3\%, Sharpe 1.46 vs.\ 0.58, annualised volatility 20.1\% vs.\ 38.1\%, and maximum drawdown $-14.2\%$ vs.\ $-35.3\%$. It outperforms in three of four calendar years and turns a negative 2023 baseline (-5.42\%) into a positive outcome (+7.79\%). Robustness checks across estimator variants and parameter settings indicate stable signals; performance declines when detection and rebalancing are less frequent, consistent with slow information diffusion. Accounting for turnover-based transaction costs, the overlay remains attractive at 5--10 bps per side owing to lower switching, but net performance compresses sharply beyond $\sim$25 bps.
 
 \textbf{Keywords:} lead--lag, return prediction, portfolio construction, regime detection, signature kernel, MMD, cryptocurrencies.
 
@@ -66,17 +75,17 @@ I would like to express my sincere thanks to my supervisor, \textbf{Dr.\ Sasan B
 
 I am deeply thankful to my parents for giving me the opportunity to study in the UK and for their constant support, both practical and emotional. 
 
-Finally, thank you to my friends in Southampton for the long study sessions, dissertation discussions, and all the small moments that made this year memorable. Any remaining errors are my own.}
+Finally, thank you to my friends in Southampton for the long study sessions, dissertation discussions, and all the small moments that made this year memorable. :)}
 \includepdf[offset=25mm -30mm]{soo.pdf}
 \tableofcontents
 \listoffigures
 \listoftables
-\lstlistoflistings
+%\lstlistoflistings
 %\listofsymbols{|l|l|}{
 %BTC & Bitcoin \\
 %S\&P &Standard \& Poor’s 500 Index
 %\\$w$ & The weight vector}
-\listofsymbols{|l|l|}{
+\listofsymbols{|l|p{0.72\linewidth}|}{
 AMH & Adaptive Markets Hypothesis \\
 EMH & Efficient Market Hypothesis \\
 TSMOM & Time-Series Momentum \\
@@ -98,20 +107,20 @@ ARMA & Autoregressive Moving-Average \\
 VAR & Vector Autoregression \\
 RMSE & Root Mean Squared Error \\
 MAE & Mean Absolute Error \\
-LLR & Lead–Lag Ratio \\
-HY & Hayashi–Yoshida (estimator / cross-correlation) \\
+LLR & Lead--Lag Ratio \\
+HY & Hayashi--Yoshida (estimator / cross-correlation) \\
 CET & Central European Time \\
 CAPM & Capital Asset Pricing Model \\
-FF3 & Fama–French Three-Factor Model \\
-FF5 & Fama–French Five-Factor Model \\
+FF3 & Fama--French Three-Factor Model \\
+FF5 & Fama--French Five-Factor Model \\
 SBM & Stochastic Block Model \\
-DI\text{-}SIM & Directed Spectral Clustering method (DI-SIM) \\
+DI\text{-}SIM & Directed spectral clustering (DI--SIM) \\
 CCF & Cross-Correlation Function \\
 AUC & Area Under the Curve \\
 ARI & Adjusted Rand Index \\
-MI & Mutual Information
+MI & Mutual Information \\   % ← 补上
 BTC & Bitcoin (anchor asset)\\
-WF & Walk–forward (rolling forward)\\
+WF & Walk--forward (rolling forward)\\
 MMD & Maximum Mean Discrepancy\\
 RBF & Radial Basis Function\\
 NaN & Not a Number (missing value)\\
@@ -152,7 +161,7 @@ $\mathcal{T}$ & Set of update dates\\
 $N$ & Number of assets\\
 $P_{i,t}$ & Close price of asset $i$ on day $t$\\
 $r_{i,t}$ & Log return of asset $i$ on day $t$\\
-$M_t$ & Signature-based lead–lag directed matrix at date $t$\\
+$M_t$ & Signature-based lead--lag directed matrix at date $t$\\
 $x^{(t,\ell)}_{i}$ & Past sequence of $i$ on $W_t$ (aligned to $j$’s future)\\
 $y^{(t,\ell)}_{j}$ & Future sequence of $j$ on $W_t$ (shifted by $\ell$)\\
 $\Phi_m(\cdot)$ & Signature feature vector up to order $m$\\
@@ -173,8 +182,9 @@ $R^{\mathrm{overlay}}_{t^+}$ & Regime-aware overlay daily return\\
 $\alpha$ & Neutral-period scaling coefficient (set to $0.5$)\\
 $\overline{r}_{\mathcal{B},\,t^+}$ & Average return of basket $\mathcal{B}$ on $t^+$\\
 $t^+$ & Next trading day (relative to update date $t$)\\
-$\mathcal{U}$ & Investable universe / tradable asset set
+$\mathcal{U}$ & Investable universe tradable set \\  % ← 建议也补上
 }
+
 
 \mainmatter
 %% ----------------------------------------------------------------
@@ -185,6 +195,7 @@ $\mathcal{U}$ & Investable universe / tradable asset set
 \include{Discussion}
 \include{Concusion}
 \appendix
+\include{AppendixB}
 \include{AppendixA}
 \backmatter
 \bibliographystyle{ecs}

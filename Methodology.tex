@@ -2,72 +2,79 @@
 %% Methodology.tex
 %% ---------------------------------------------------------------- 
 \chapter{Methodology}
+\section{Overview}
 
-\section{Research Design}
+\begin{figure}[t]
+\centering
+\resizebox{0.98\linewidth}{!}{
+\includegraphics[]{process_plot/process.png}}
+\caption{BTC-regime-aware lead-lag pipeline}
+\end{figure}
 
-The research design of this dissertation follows a clear step-by-step process that links feature extraction, regime detection, trading strategy design, and performance evaluation. The idea is to start from raw Bitcoin (BTC) price data, transform it into useful features, identify market regimes, and then see how these regimes can improve trading strategies compared to a baseline. 
+This chapter presents an end-to-end pipeline. The pipeline links path-wise feature extraction, walk-forward regime detection, portfolio construction, and performance evaluation. We start from daily BTC closes. We then compute signature-based features that preserve temporal ordering, detect market regimes in a strictly leakage-free manner and finally use these regimes to condition a cross-sectional lead--lag hedge. All signals that we generate on day $t$ are executed on the next trading day $t^+$. All evaluations follow a unified daily calendar.
 
-The first step is to use \textit{signature methods}, a tool from rough path theory, to extract path-wise features from the BTC price series. These features capture not only the movement of prices but also the order and dependency in how they evolve over time. This allows us to describe the market in a more detailed way than simple indicators like volatility or moving averages. 
+First, we extract \emph{path-wise} information with signature methods. We work with signature features or the signature kernel. These tools capture both the magnitude of price moves and the order of increments. This choice yields a representation that goes beyond scale-based indicators such as volatility. This representation encodes the geometry of the path.
 
-Next, we apply a \textit{walk-forward clustering} procedure to these features. This means that we cluster the data into different groups (bull, bear, and neutral regimes) in a way that respects the timeline. At any point in time, the method only uses information that would have been available up to that point, which helps avoid look-ahead bias and keeps the analysis closer to a real-world setting. 
+Second, we run \emph{walk-forward clustering} on rolling path groups to obtain bull, neutral, and bear labels. At each decision date, our clustering uses only eligible historical groups whose forward windows are fully observed. Our mapping assigns clusters to economic states by their mean $H$-day forward returns. Our voting rule converts group-time labels into a daily series via a rolling vote. This procedure estimates semantics strictly from the past and avoids look-ahead.
 
-In the third step, we take a \textit{baseline lead--lag strategy} and add the regime information on top of it. The lead--lag framework, developed in previous studies (Lyons and Qian, 2002; Gatheral et al., 2018), is used as the base strategy because it captures cross-sectional signals. By overlaying regime signals, the strategy becomes \textit{regime-aware}: in bull markets, exposure can be increased, while in bear markets it can be reduced or reversed, with neutral markets handled more cautiously. 
+Third, we form a baseline \emph{lead--lag} hedge and we overlay regime information. The baseline computes a rolling, directed lead--lag matrix from daily returns, and then forms an equal-weight long--short portfolio that is \emph{long followers} and \emph{short leaders}. The regime-aware overlay preserves this hedge structure. The overlay \emph{routes} constituents by the signed relation to a BTC anchor. In bull states, the overlay places co-moving assets on the long side and anti-moving assets on the short side. In bear states, the overlay flips the assignment. In neutral states, the overlay scales its effect by a fixed factor while keeping the hedge intact.
 
-Finally, we compare the performance of the baseline strategy and the regime-aware strategy. To do this, we use standard measures such as Sharpe ratio, Sortino ratio, cumulative return, and maximum drawdown. This allows us to see whether the extra regime information actually helps improve trading outcomes, both in terms of returns and risk management. 
+Finally, we evaluate both the baseline and the regime-aware strategies under a common protocol. We also report Sharpe and Sortino ratios, annualised volatility, cumulative return, and maximum drawdown. We finally analyse transaction-cost sensitivity separately. 
+
+
+
 
 \section{Regime Detection}\label{sec:regime-detection}
 
-
-
-
 \subsection{Data and Pre-processing}
-We construct a daily market regime label $z_t\in\{0,1,2\}$ (\(0=\) bear, \(1=\) neutral, \(2=\) bull) from the anchor asset (Bitcoin, BTC) \textbf{from January 1, 2021
-to June 30, 2024} using pathwise statistics based on the signature kernel. The signal is purely backward-looking at each date and is later used to modulate portfolio weights (Section~\ref{sec:regime}).
+This study constructs a daily market regime label $z_t\in\{0,1,2\}$, where $0=$ bear, $1=$ neutral, and $2=$ bull. The label is built from the anchor asset BTC from January 1, 2021 to June 30, 2024. The construction relies on path-wise statistics based on the signature kernel. Accordingly, the signal remains purely backward-looking at each date. The downstream portfolio module later uses this signal to modulate weights (Section~\ref{sec:regime}).
 
-Let $p_\tau$ denote the BTC close price at time $\tau$ on a daily calendar.
-We embed the time series as a path $\gamma=\{(\tau,p_\tau)\}_\tau$ and work on rolling \emph{subpaths} of fixed length.
-All timestamps are aligned to a unified timezone and deduplicated.
+The notation defines $p_\tau$ as the BTC close price at time $\tau$ on a daily calendar. The time series is embedded as a path $\gamma=\{(\tau,p_\tau)\}_\tau$. The methodology operates on rolling \emph{subpaths} of fixed length. All timestamps are aligned to a unified timezone. Timestamps are also deduplicated before segmentation.
 
-\subsection{Path segmentation and transformation}\label{sec:regime:seg}
-Fix integers $n_{\text{steps}}\ge 2$ and $n_{\text{paths}}\ge 2$ and an overlap offset $o\ge 0$.
-We slice $\gamma$ into consecutive subpaths of length $n_{\text{steps}}$ with stride $(n_{\text{steps}}-o)$:
+\subsection{Path Segmentation and Transformation}\label{sec:regime:seg}
+The configuration fixes integers $n_{\text{steps}}\ge 2$ and $n_{\text{paths}}\ge 2$ and an overlap offset $o\ge 0$. The procedure slices $\gamma$ into consecutive subpaths of length $n_{\text{steps}}$ with stride $(n_{\text{steps}}-o)$:
 \[
 \textstyle
 \mathrm{sub\_paths}
 =\big\{\gamma^{(k)}\big\}_{k=1}^{N},\qquad
 \gamma^{(k)}=\big((\tau_{k,1},p_{k,1}),\ldots,(\tau_{k,n_{\text{steps}}},p_{k,n_{\text{steps}}})\big).
 \]
-We then collect \emph{groups} of $n_{\text{paths}}$ consecutive subpaths for two-sample comparisons:
+Next, the method collects \emph{groups} of $n_{\text{paths}}$ consecutive subpaths for two-sample comparisons:
 \[
 \textstyle
 \mathrm{groups}=\big\{G_g\big\}_{g=1}^{G},\quad
 G_g=\big(\gamma^{(g)},\gamma^{(g+1)},\ldots,\gamma^{(g+n_{\text{paths}}-1)}\big),
 \]
-so that each group $G_g$ covers a concrete calendar span
+so that each group $G_g$ covers a calendar span
 $[s_g,e_g]=[\tau_{g,1},\,\tau_{g+n_{\text{paths}}-1,n_{\text{steps}}}]$.
-Before computing similarities, each path is transformed by a \emph{path transformer} \(T\) that standardizes levels (to the initial value) and normalizes time:
+
+Before computing similarities, a \emph{path transformer} \(T\) standardises levels to the initial value and normalises time:
 \[
 \widehat\gamma=T(\gamma);\quad
 T=\text{(standardise\_path, time\_normalisation)}.
 \]
-Other transforms (differences, cumulants, lead--lag lift, invisibility) are disabled in our baseline.
+For clarity, the baseline disables other transforms. The exclusions cover differences, cumulants, lead--lag lifts, and invisibility.
 
-\subsection{Signature–kernel MMD distance}\label{sec:regime:mmd}
-We compare two groups of paths $G_g$ and $G_h$ via the maximum mean discrepancy (MMD) under a signature kernel $K_\Sigma$.
-Let $\Phi(\cdot)$ denote the (implicit) feature map induced by $K_\Sigma$, built from an ambient RBF kernel on the state space (time+level) with bandwidth $\sigma$ = 1, dyadic order $d$ = 2 and regularization \(\lambda=1.0\).
-The unbiased MMD$^2$ between bags of paths $A=\{x_a\}$ and $B=\{y_b\}$ is
+For each subpath $\gamma^{(k)}=((\tau_{k,1},p_{k,1}),\dots,(\tau_{k,n_{\text{steps}}},p_{k,n_{\text{steps}}}))$, the transformer applies level standardisation and time normalisation:
+\[
+\tilde p_{k,j}\;=\;\frac{p_{k,j}}{p_{k,1}},\qquad
+\tilde \tau_{k,j}\;=\;\frac{j-1}{\,n_{\text{steps}}-1\,},\quad j=1,\dots, n_{\text{steps}}.
+\]
+Thus, the transformed subpath $\widehat\gamma^{(k)}=\{(\tilde\tau_{k,j},\tilde p_{k,j})\}_{j=1}^{n_{\text{steps}}}$ starts at level $1$ and lives on $[0,1]$.
+
+\subsection{Signature--Kernel MMD Distance}\label{sec:regime:mmd}
+The representation uses the path signature, a sequence of iterated integrals that encodes time ordering. The design avoids explicit truncation and explicit coordinates. Instead, the approach employs the \emph{signature kernel} $K_\Sigma$, which provides an implicit feature map $\Phi(\cdot)$ on path space. Consequently, the kernel enables two-sample testing and clustering without manual feature design~\cite{chevyrev2025primersignaturemethodmachine}.
+
+The implementation instantiates $K_\Sigma$ via \texttt{higherOrderKME.sigkernel} with an ambient RBF on $(\text{time},\text{level})$. The settings use bandwidth $\sigma=1$, dyadic order $d=2$, and regularisation $\lambda=1$~\cite{salvi2021higher}. In turn, this configuration yields \emph{order-aware} similarities that suit regime discrimination.
+
+The comparison between two groups of paths $G_g$ and $G_h$ uses maximum mean discrepancy (MMD) under $K_\Sigma$. The analysis denotes the implicit feature map by $\Phi(\cdot)$. The unbiased MMD$^2$ between bags of paths $A=\{x_a\}$ and $B=\{y_b\}$ is
 \[
 \mathrm{MMD}^2(A,B)
 = \frac{1}{|A|(|A|-1)}\!\!\sum_{\substack{a\neq a'}}\! K_\Sigma(x_a,x_{a'})
 + \frac{1}{|B|(|B|-1)}\!\!\sum_{\substack{b\neq b'}}\! K_\Sigma(y_b,y_{b'})
 - \frac{2}{|A||B|}\sum_{a,b} K_\Sigma(x_a,y_b).
 \]
-We define a symmetric \emph{group distance} by
-\(
-D_{g,h}=\mathrm{MMD}(G_g,G_h).
-\)
-$K_\Sigma$ is instantiated via \texttt{higherOrderKME.sigkernel}.
-We compute and store the full precomputed distance matrix $D\in\mathbb{R}^{G\times G}$ for each $(n_{\text{steps}},n_{\text{paths}})$ configuration.
+Accordingly, the procedure defines a symmetric \emph{group distance} as $D_{g,h}=\mathrm{MMD}(G_g,G_h)$. The system computes and stores the full precomputed distance matrix $D\in\mathbb{R}^{G\times G}$ for each $(n_{\text{steps}},n_{\text{paths}})$ configuration.
 
 \begin{algorithm}[H]
 \caption{Walk--forward regime detection (signature kernel)}
@@ -99,50 +106,29 @@ compute precomputed $D$ with $D_{g,h}=\mathrm{MMD}(G_g,G_h)$ under $K_\Sigma$; c
 for each day $t$, set $z_t$ to the majority label among the last $k$ completed groups ($e_u\le t$), breaking ties by recency; optionally merge consecutive equal labels for plotting
 \end{algorithm}
 
+Overall, grouping $n_{\text{paths}}$ consecutive subpaths forms two short bags of recent behaviour. The unbiased MMD on $K_\Sigma$ then serves as a path-wise two-sample distance between historical windows. Consequently, the distance highlights persistent geometric changes rather than pointwise volatility alone.
 
+\subsection{Strict Walk--Forward Retraining and Labeling}\label{sec:wfstrict}
+The calendar span of group $G_g$ is $[s_g,e_g]$. The historical window length is $w=\mathbf{30}$ groups, and the forward horizon is $H=\mathbf{30}$ trading days. The loop iterates for $g=w\!-\!1,\ldots,G\!-\!1$:
 
-\subsection{Strict walk–forward retraining and labeling}\label{sec:wfstrict}
-Let $[s_g,e_g]$ be the calendar span covered by group $G_g$. Fix a historical window length of
-$w=\mathbf{30}$ groups and a forward horizon $H=\mathbf{30}$ trading days. For $g=w\!-\!1,\ldots,G\!-\!1$:
 \begin{enumerate}[leftmargin=1.2em,itemsep=2pt,topsep=2pt]
 \item \textbf{Eligibility (visibility constraint).}
-Compute forward log returns $r^{(H)}_u$ for all groups $u$ using bars strictly after each group’s
-end time (``\texttt{start\_from=next}''). At decision $g$, only those historical groups in the window
-$\{g-w+1,\ldots,g\}$ whose $H$-day future is \emph{fully observed} by time just after $e_g$ are
-eligible for training; the current group $g$ is excluded.
+The engine computes forward log returns $r^{(H)}_u$ for all groups $u$ using bars strictly after each group’s end time (``\texttt{start\_from=next}''). At decision $g$, the training set includes only those historical groups in $\{g-w+1,\ldots,g\}$ whose $H$-day future is fully observed by just after $e_g$. The current group $g$ is excluded from training.
+
 \item \textbf{Clustering on eligible history.}
-Run Agglomerative Clustering (complete linkage, precomputed distances) on the eligible submatrix
-to obtain $n_c=\mathbf{3}$ clusters. Compute each cluster’s \emph{medoid} (member with the smallest
-row-sum distance).
+The clustering step runs Agglomerative Clustering (complete linkage, precomputed distances) on the eligible submatrix. The procedure yields $n_c=\mathbf{3}$ clusters. The prototype step computes each cluster’s \emph{medoid} as the member with the smallest row-sum distance.
+
 \item \textbf{Semantic mapping (per-step).}
-Using the eligible groups’ forward returns $\{r^{(H)}_u\}$, score each cluster by its mean
-(we require \textbf{min\_count}$=\mathbf{10}$ eligible samples). Map the cluster with the lowest
-(mean) forward return to label $0$ (bear) if its effect $<\tau_{-}$, and the highest to label $2$
-(bull) if its effect $>\tau_{+}$, with thresholds $(\tau_{+},\tau_{-})=(\mathbf{0},\mathbf{0})$; all
-others are label $1$ (neutral). No label is forced if thresholds are not met.
+The scoring step uses the eligible groups’ forward returns $\{r^{(H)}_u\}$. The procedure requires \textbf{min\_count}$=\mathbf{10}$ eligible samples. The mapping assigns label $0$ (bear) to the cluster with the lowest mean if its effect $<\tau_{-}$. The mapping assigns label $2$ (bull) to the cluster with the highest mean if its effect $>\tau_{+}$. The thresholds are $(\tau_{+},\tau_{-})=(\mathbf{0},\mathbf{0})$. All remaining clusters receive label $1$ (neutral). No label is forced if thresholds are unmet.
+
 \item \textbf{Label the current group only.}
-Assign $G_g$ to the nearest medoid (by $D$) and inherit its semantic label
-$\mathrm{dir\_label}_g\in\{0,1,2\}$. Earlier groups are not retroactively changed.
+The assignment step maps $G_g$ to the nearest medoid by $D$. The selected cluster is denoted $c^\star$. The algorithm sets $\mathrm{dir\_label}_g\in\{0,1,2\}$ to the semantic label of $c^\star$. Earlier groups remain unchanged.
 \end{enumerate}
-This procedure is repeated at every $g$; mappings are re-estimated strictly from history, so semantics
-adapt over time without leakage.
 
-\subsection{Daily regime series via rolling vote}\label{sec:dailyvote}
-Group labels live on irregular end times $\{e_g\}$. We build a daily $z_t$ by a majority vote over the
-last $k=\mathbf{7}$ \emph{completed} groups at each day $t$ (ties resolved by recency). Consecutive
-days with the same label are merged into non-overlapping spans for visualization; we also export a
-date-indexed daily series (values $0/1/2$) for backtesting.
+This loop re-estimates mappings strictly from history at every $g$. Consequently, the semantics adapt over time without leakage.
 
-\iffalse
-\subsection{Hyperparameters and defaults}\label{sec:regime-params}
-Unless otherwise stated we use:
-\[
-o=0,\quad w=30,\quad n_c=3,\quad H=30,\quad k=7,\quad \text{min\_count}=10,\quad
-(\tau_{+},\tau_{-})=(0,0),\ \text{start\_from}=\text{``next''}.
-\]
-We iterate over $(n_{\text{steps}},n_{\text{paths}})\in\{5,8,10,15\}\times\{8,12,16,20\}$ with
-\texttt{offset=0}. Runs with inconsistent group counts are skipped.
-\fi
+\subsection{Daily Regime Series via Rolling Vote}\label{sec:dailyvote}
+Group labels live on irregular end times $\{e_g\}$. A majority vote produces a daily series $z_t$ using the last $k=\mathbf{7}$ \emph{completed} groups at each day $t$. A tie-breaking rule resolves ties by recency. A post-processing step merges consecutive days with the same label into non-overlapping spans for visualisation. An exported date-indexed daily series (values $0/1/2$) then supports backtesting.
 
 
 \section{Lead--Lag Dependence}\label{sec:leadlag}
@@ -185,32 +171,25 @@ We iterate over $(n_{\text{steps}},n_{\text{paths}})\in\{5,8,10,15\}\times\{8,12
 \textbf{return} $\{M_t\}_{t\in\mathcal{T}}$
 \end{algorithm}
 
-
 \subsection{Data and Pre-processing}
-We study a cross–section of $N=72$ assets with daily close prices from
-\textbf{January 1, 2021} to \textbf{June 30, 2024}.
-The universe and basic descriptors are listed in Table~\ref{tab:assets}.
-Prices are end–of–day closes as reported in the underlying dataset; timestamps are converted to a unified timezone and deduplicated.
+This subsection defines the sample. The dataset contains daily close prices for $N=72$ assets from January 1, 2021 to June 30, 2024. Table~\ref{tab:assets} lists the universe and basic descriptors. The source records end-of-day closes. Therefore, the analysis uses close prices as the reference level. The pipeline converts all timestamps to a single time zone. It also removes duplicate timestamps before alignment.
 
-Let $P_{i,t}$ denote the close price of asset $i\in\mathcal{U}$ on trading day $t$ and
-$r_{i,t}=\ln P_{i,t}-\ln P_{i,t-1}$ its log return.
-We work with the panel $P=\{P_{i,t}\}$ aligned on a daily calendar, keeping assets with sufficient coverage over the sample.%\footnote{In practice we require a minimum coverage threshold (e.g., $80\%$ of the sample days); assets failing the threshold are excluded from the baseline universe.}
+The close price of asset $i\in\mathcal{U}$ on day $t$ is defined by $P_{i,t}$ and the log return calculated by $r_{i,t}=\ln P_{i,t}-\ln P_{i,t-1}$. The analysis then aligns the panel $P=\{P_{i,t}\}$ on a daily calendar. It retains only assets with sufficient coverage. The algorithm skips a pair when either shifted sequence has fewer than $L-\ell$ valid observations. The portfolio step also omits asset $i$ temporarily when row $i$ has fewer than $q$ valid links, so that ranks remain stable. Finally, the pre-processing winsorises returns at the 2.5/97.5 percentiles, which reduces level effects.
 
 \subsection{Signature-based Lead--Lag Matrix}\label{sec:signature}
+The analysis uses a rolling window and a maximum forward lag to set the comparison frame. It first sets $W_t=\{t-L+1,\ldots,t\}$ and denotes the maximum lag by $\ell_{\max}$. Under this frame, the algorithm builds a directed matrix $M_t\in\mathbb{R}^{N\times N}$. It relies on a \emph{path-signature} (sequence-kernel) score. The path signature captures order information that linear correlation ignores. Therefore, the analysis adopts it as the primary measure of direction. For clarity, the analysis writes $r_{i,\tau}$ for the winsorised log return of asset $i$ on day $\tau$.
 
-Given a rolling window $W_t=\{t-L+1,\ldots,t\}$ and a maximum forward lag $\ell_{\max}$, we construct a directed matrix $M_t\in\mathbb{R}^{N\times N}$ using a \emph{path-signature} (sequence-kernel) score that captures order information beyond linear correlation. Let $r_{i,\tau}$ denote the (winsorized) log return of asset $i$ on day $\tau$ (data handling as described earlier).
-
-For each ordered pair $(i,j)$ and each lag $\ell\in\{1,\ldots,\ell_{\max}\}$, define two length-$L-\ell$ return sequences on $W_t$:
+The procedure defines two sequences for each ordered pair $(i,j)$ and for each lag $\ell\in\{1,\ldots,\ell_{\max}\}$. It sets
 \[
 x^{(t,\ell)}_{i}=\big(r_{i,t-L+1},\ldots,r_{i,t-\ell}\big),\qquad
 y^{(t,\ell)}_{j}=\big(r_{j,t-L+1+\ell},\ldots,r_{j,t}\big).
 \]
-Thus $x^{(t,\ell)}_{i}$ is aligned with \emph{future} returns of $j$ shifted by $\ell$ days, so any dependence reflects $i$ potentially \emph{preceding} $j$.
+This alignment pairs the \emph{past} of $i$ with the \emph{future} of $j$ shifted by $\ell$ days. Therefore, any detected dependence may indicate that $i$ \emph{leads} $j$.
 
-Map each discrete sequence to a truncated signature (or sequence-kernel feature) vector $\Phi_m(\cdot)\in\mathbb{R}^{D(m)}$ up to degree $m$ (e.g., $m=2$ or $3$). We apply per-window normalization so that
-$\widehat\Phi_m(z)=\Phi_m(z)/\|\Phi_m(z)\|$ to remove scale effects. Intuitively, $\Phi_m$ encodes iterated increments and preserves temporal ordering.
+The mapping sends each sequence to a truncated signature vector $\Phi_m(\cdot)\in\mathbb{R}^{D(m)}$ up to degree $m$ (e.g., $m=2$ or $3$). The analysis normalises features within each window and sets
+$\widehat\Phi_m(z)=\Phi_m(z)/\|\Phi_m(z)\|$. This step removes scale effects. It also preserves temporal order through iterated increments. Hence, the features support consistent comparisons across assets and lags.
 
-For each $\ell$, compute the \emph{antisymmetric} (directional) similarity between $i$’s past and $j$’s future:
+The algorithm then computes an \emph{antisymmetric} directional similarity for each $\ell$. It contrasts the forward ordering with the reverse ordering:
 \[
 s^{(\ell)}_{ij}(t)
 \;=\;
@@ -220,19 +199,17 @@ s^{(\ell)}_{ij}(t)
 \underbrace{\big\langle \widehat\Phi_m\!\big(x^{(t,\ell)}_{j}\big),\,
 \widehat\Phi_m\!\big(y^{(t,\ell)}_{i}\big)\big\rangle}\_{\text{``$j$ then $i$''}}.
 \]
-The first term measures how well $i$’s history explains $j$’s future; the second, the reverse. Their difference isolates directionality (zero if perfectly symmetric).
+The first term measures how well the history of $i$ explains the future of $j$. The second term measures the reverse. Therefore, their difference isolates directionality and equals zero under perfect symmetry.
 
-Select the lag that maximizes the absolute directional strength,
+The selection step chooses the lag with the largest absolute score. It sets
 \[
 \ell^\star_{ij}(t)=\arg\max_{1\le \ell\le \ell_{\max}} \big|s^{(\ell)}_{ij}(t)\big|,
 \qquad
-M_t(i,j)=s^{(\ell^\star_{ij}(t))}_{ij}(t),
+M_t(i,j)=s^{(\ell^\star_{ij}(t))}_{ij}(t).
 \]
-and set $M_t(i,i)=0$. Pairs with insufficient in-window overlap after shifting are set to $\mathrm{NaN}$ and ignored downstream. The result is a directed matrix where $M_t(i,j)>0$ indicates that $i$ \emph{leads} $j$ with same-sign comovement, and $M_t(i,j)<0$ indicates an opposite-sign lead.
+The convention sets $M_t(i,i)=0$. When shifting yields insufficient overlap, the algorithm writes the entry as $\mathrm{NaN}$ and the downstream pipeline ignores it. Consequently, the matrix $M_t$ is directed. When $M_t(i,j)>0$, asset $i$ \emph{leads} asset $j$ with same-sign co-movement. When $M_t(i,j)<0$, asset $i$ leads asset $j$ with opposite-sign co-movement.
 
-The method is governed by $(L,\ell_{\max},m)$ and the feature normalization; we compute the rolling lead--lag matrices with
-window length $L=\mathbf{30}$ business days, update frequency $f=\mathbf{1}$ business day (daily
-rebalancing schedule), and maximum forward lag $\ell_{\max}=\mathbf{7}$.
+The final paragraph reports hyperparameters and ranges. The implementation uses a window length of $L=\mathbf{30}$ business days, an update frequency of $f=\mathbf{1}$ business day, and a maximum forward lag of $\ell_{\max}=\mathbf{7}$. Because per-window normalisation enforces $\|\widehat\Phi_m(\cdot)\|=1$, each inner product lies in $[-1,1]$. This bound implies $s^{(\ell)}_{ij}(t)\in[-2,2]$ and thus $M_t(i,j)\in[-2,2]$. As a robustness check, the analysis can clip $M_t$ to $[-1,1]$ by setting $M_t\leftarrow \tfrac{1}{2}M_t$. This clipping reduces the impact of extreme windows.
 
 \section{Strategy}\label{sec:strategy}
 
@@ -268,7 +245,7 @@ s_t(i)\;=\;\frac{1}{N-1}\sum_{\substack{j=1\\ j\neq i}}^{N} M_t(i,j),\qquad i=1,
 \]
 so that large positive $s_t(i)$ indicates that $i$ tends to \emph{lead} many others (a ``leader''), while large negative values indicate a ``follower''.
 
-\paragraph{Portfolio formation.}
+
 Fix a tail quantile $q\in(0,0.5)$ and a minimum leg size $k\in\mathbb{N}$.
 Let
 \[
@@ -369,7 +346,6 @@ while $z_t\in\{0,2\}$ uses full weight.
 Positions are set on $t^+$; if either the long or short basket has fewer than $k$ = 2 names after sign-splitting (and optional strength filtering), we skip trading at $t$.
 All weights are equal within each basket; exposure can be normalized to target a fixed gross if desired.
 
-This overlay preserves the economic intuition of the baseline (leaders move first; followers adjust with a delay) while conditioning on the market state via an anchor asset.
-The anchor can be generalized beyond BTC and the orientation (row/column) follows the definition of $M_t$.
-We defer the construction of $z_t$ and empirical comparisons of neutral policies and strength filters to the results chapter.
+Our overlay preserves the baseline economic intuition. The leaders act first. The followers adjust after a delay. In addition, the overlay conditions on the market state through an anchor asset.
 
+%The anchor asset is not limited to BTC. We can generalise it to any liquid benchmark. The orientation—row or column—follows the definition of $M_t$. 

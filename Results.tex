@@ -14,10 +14,13 @@
 \newcommand{\neutralScale}{0.5}
 
 % =================== RESULTS CHAPTER (paste in body) ===================
-\chapter{Results and Discussion}\label{sec:results}
+\chapter{Results and Evaluation}\label{sec:results}
 
-We evaluate daily close-to-close strategies on \sampleStart{}–\sampleEnd{}.
-Unless otherwise noted, annualization uses factor \annfac{}, costs are reported separately, and portfolios are executed on $t^+$ (first trading day after signal time).
+We use \sampleStart{}–\sampleEnd{} as the data-availability window. The \emph{effective} evaluation start date $t_0$ is configuration-dependent due to warm-up requirements in both components. For each configuration we begin evaluation at its first tradable day $t_0$ (signals on $t$, execution on $t^+$). Annualisation uses factor \annfac{}, costs are reported separately, and the risk-free rate is set to zero. %When comparing multiple configurations, we make clear whether results are computed on each strategy’s own window (per-strategy $t_0$) or on the intersection-aligned window (common $t_0=\max$ of all configurations).
+
+
+%We evaluate daily close-to-close strategies on \sampleStart{}–\sampleEnd{}.
+%Unless otherwise noted, annualization uses factor \annfac{}, costs are reported separately, and portfolios are executed on $t^+$ (first trading day after signal time).
 
 
 
@@ -30,16 +33,14 @@ Unless otherwise noted, annualization uses factor \annfac{}, costs are reported 
 
 \section{Headline Performance}\label{sec:results:headline}
 
-
-
 \begin{table}[t]
 \centering
-\caption{Headline performance (daily data; ann.\ factor = \annfac). }
+\caption{Headline performance.}
 \label{tab:main}
 \small
 \begin{tabular}{lcc}
 \toprule
-Metric & Baseline & Overlay (preserve hedge) \\
+Metric & Baseline & Overlay (preserves hedge) \\
 \midrule
 Cumulative Return (\%)     & 59.53 & 132.78 \\
 CAGR (\%)                  & 16.28 & 31.38  \\
@@ -48,35 +49,31 @@ Sharpe                     & 0.58  & 1.46   \\
 Sortino                    & 0.90  & 2.46   \\
 Max Drawdown (\%)          & -35.32 & -14.15 \\
 Time in Market (\%)        & 43.0  & 43.0   \\
-Risk-free rate (\%)        & 0.0   & 0.0    \\
+%Risk-free rate (\%)        & 0.0   & 0.0    \\
 Final NAV                  & 1.5953 & 2.3278 \\
 Active Days (approx.)      & 549   & 549    \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:main} reports headline performance for the baseline lead--lag hedge and the
-regime‐aware overlay with the baseline hedge preserved. Annualization uses factor \annfac{}
-and the risk–free rate is set to zero; figures are gross of costs.
+Table~\ref{tab:main} reports headline performance of the lead--lag hedge. The overlay keeps that hedge and adds regime awareness. The risk--free rate is zero. The overlay delivers a stronger risk--return trade--off. Cumulative return rises from \textbf{59.53\%} to \textbf{132.78\%}. CAGR increases from \textbf{16.28\%} to \textbf{31.38\%} (see Figure~\ref{fig:nav}). Meanwhile, annualised volatility falls from \textbf{38.09\%} to \textbf{20.06\%}. As a result, Sharpe improves from \textbf{0.58} to \textbf{1.46}, and Sortino from \textbf{0.90} to \textbf{2.46}. Drawdowns also ease: the maximum drawdown tightens from \textbf{--35.32\%} to \textbf{--14.15\%}. Importantly, time in market is identical at \textbf{43\%}. So the gains come from better selection and positioning, not from higher exposure. Final NAV rises from \textbf{1.5953} to \textbf{2.3278}. In short, the overlay earns more with materially less risk at the same participation rate.
 
-The overlay delivers a materially better risk–return profile. Cumulative return rises from
-\textbf{59.53\%} to \textbf{132.78\%} and CAGR from \textbf{16.28\%} to \textbf{31.38\%} as shown in Figure \ref{fig:nav}, while
-annualized volatility drops from \textbf{38.09\%} to \textbf{20.06\%}. Consistent with this,
-Sharpe improves from \textbf{0.58} to \textbf{1.46} and Sortino from \textbf{0.90} to
-\textbf{2.46}. Drawdown control also strengthens: the maximum drawdown shrinks from
-\textbf{--35.32\%} to \textbf{--14.15\%}. Importantly, \emph{time in market is identical}
-(\textbf{43\%}), implying that the improvement stems from more effective selection/positioning
-rather than greater exposure. Final NAV increases from \textbf{1.5953} to \textbf{2.3278}.
-(“Active Days” is an approximation based on \emph{Time in Market} multiplied by the sample length.)
-Overall, the table illustrates that the overlay achieves higher returns with substantially
-lower risk at the same participation rate.
+Figure~\ref{fig:roll_sharpe_6m} plots the rolling 6-month Sharpe. 
+The overlay spends more time above 1 and shortens negative spells around 2022, consistent with its faster exit and recovery.
 
-% Optional: NAV figure (overlay both lines). Replace path with your saved PNG.
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.9\linewidth]{headline_plots/NAV.png}% <-- put your path
-\caption{Cumulative NAV: baseline vs. regime overlay (shaded regimes optional).}
+\caption{Cumulative NAV: baseline vs.\ regime overlay.}
 \label{fig:nav}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\linewidth]{headline_plots/Rolling_Sharp.png}
+\caption{Rolling 6-month Sharpe for the baseline and the Overlay.}
+\label{fig:roll_sharpe_6m}
 \end{figure}
 
 
@@ -98,18 +95,11 @@ Longest DD Days      & 495 & 238 \\
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:diag_dd} summarizes the drawdown profile. The overlay reduces the peak-to-trough
-loss from \textbf{--35.32\%} to \textbf{--14.15\%} and cuts time under water roughly in half
-(\textbf{495} to \textbf{238} days). The baseline’s worst episode is long and persistent
-(\textbf{2021-09-10} to \textbf{2023-01-17}, trough on \textbf{2021-12-03}), capturing the extended
-2022 downturn. The overlay’s worst spell begins a bit later (\textbf{2021-11-24}), bottoms quickly
-(\textbf{2022-01-05}), and is over by mid-\textbf{2022} (\textbf{2022-07-19}), i.e., it absorbs the
-early-2022 selloff but exits and recovers faster. Overall, the table shows a softer left tail and a
-shorter recovery horizon for the overlay, in line with its higher risk-adjusted performance.
+Table~\ref{tab:diag_dd} details the drawdown. The overlay cuts the peak--to--trough loss from \textbf{--35.32\%} to \textbf{--14.15\%}. It also halves time under water from \textbf{495} to \textbf{238} days. The baseline’s worst episode is long and persistent (\textbf{2021-09-10} to \textbf{2023-01-17}; trough on \textbf{2021-12-03}) and spans the 2022 downturn. The overlay’s worst spell starts later (\textbf{2021-11-24}), bottoms quickly (\textbf{2022-01-05}), and ends by mid-\textbf{2022} (\textbf{2022-07-19}). In other words, it absorbs the early-2022 selloff but exits and recovers faster. Net effect: a softer left tail and a shorter recovery horizon, consistent with the higher risk-adjusted performance.
 
 \begin{table}[t]
 \centering
-\caption{EOY Returns vs.\ Baseline (calendar years). Multiplier $=$ Strategy / Baseline; negative means opposite signs.}
+\caption{EOY returns vs.\ baseline. Multiplier $=$ Strategy / Baseline; negative means opposite signs.}
 \label{tab:eoy}
 \small
 \begin{tabular}{lrrrr}
@@ -124,14 +114,13 @@ Year & Baseline & Strategy & Multiplier & Won \\
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:eoy} reports end-of-year returns for the baseline and the regime-overlay strategy, together with the multiplier (Strategy/Baseline). The table shows that the overlay outperforms in \textbf{three of four} years—\textbf{2021}, \textbf{2023}, and \textbf{2024 (YTD)}—with multipliers of \textbf{2.87}, \textbf{-1.44}, and \textbf{1.26}, respectively. The negative multiplier in 2023 indicates a sign reversal (baseline \(-5.42\%\) versus strategy \(+7.79\%\)). In \textbf{2022}, the multiplier is \textbf{0.91}, indicating a mild shortfall. Overall, Table~\ref{tab:eoy} illustrates that the overlay generally adds value, particularly when baseline performance is adverse, while still providing an edge in rising markets.
-
+Table~\ref{tab:eoy} compares year-end returns and the multiplier (Strategy/Baseline). The overlay wins in \textbf{three of four} years---\textbf{2021}, \textbf{2023}, and \textbf{2024 (YTD)}---with multipliers of \textbf{2.87}, \textbf{-1.44}, and \textbf{1.26}. The negative multiplier in 2023 signals a sign flip (baseline \(-5.42\%\) vs.\ strategy \(+7.79\%\)). In \textbf{2022}, the multiplier is \textbf{0.91}, a mild shortfall. Overall, the overlay adds value when the baseline struggles and still provides an edge in rising markets.
 
 \begin{table}[t]
 \centering
-\caption{Top-5 by Sharpe compared with Baseline Strategy}
-\small
+\caption{Top-5 by Sharpe compared with baseline strategy.}
 \label{tab:top5_sharpe_params}
+\small
 \begin{tabular}{lccccccc}
 \toprule
 Strategy (params) & Sharpe & CAGR & Vol (ann) & MaxDD & Calmar & Alpha (ann) & WinRate \\
@@ -142,11 +131,9 @@ $n\_steps, n\_paths=15, 12$ & 0.892 & 0.150 & 0.173 & -0.173 & 0.863 & 0.112 & 0
 $n\_steps, n\_paths=15, 16$ & 0.853 & 0.154 & 0.188 & -0.155 & 0.994 & 0.100 & 0.157 \\
 $n\_steps, n\_paths=5, 8$  & 0.816 & 0.161 & 0.210 & -0.192 & 0.841 & 0.095 & 0.214 \\
 \hline
-Baseline & 0.564 & 0.155 & 0.391 & -0.353 & 0.440 & 0.000 & 0.219 \\
-
+Baseline & 0.580 & 0.163 & 0.380 & -0.353 & 0.440 & 0.000 & 0.219 \\
 \bottomrule
 \end{tabular}
-\label{tab:tc_sensitivity}
 \end{table}
 
 
@@ -164,34 +151,55 @@ Baseline & 0.564 & 0.155 & 0.391 & -0.353 & 0.440 & 0.000 & 0.219 \\
   \label{fig:top5_nav_union}
 \end{figure}
 
-We evaluate candidate parameterizations in a \emph{strict walk-forward} setting—training only on past windows and labeling the current group only—and rank them by Sharpe. For context we also report the Baseline. All results use a unified daily calendar (crypto annualization factor of 365), and returns are aligned from the \emph{signal day} to the \emph{next trading day}. Rates are shown in decimal form (e.g., 0.20 = 20\%). See Table~\ref{tab:top5_sharpe_params}.
+First, we evaluate candidate parameterisations in a \emph{strict walk-forward} setup, train only on past windows and label only the current group. Then we rank each configuration by Sharpe. For context, we also report the Baseline. Throughout, we use a unified daily calendar with a crypto annualisation factor of 365. We align returns from the \emph{signal day} to the \emph{next trading day}. Rates are in decimals (e.g., 0.20 = 20\%). See Table~\ref{tab:top5_sharpe_params}.
 
-A clear pattern emerges: short windows with more paths are the strongest. In particular, \(n_{\text{steps}}=5\) with \(n_{\text{paths}}\in\{16,20\}\) delivers the best risk-adjusted performance. The top configuration \(n_{\text{steps}}=5, n_{\text{paths}}=20\) attains a Sharpe of 1.44 with annualized volatility of 0.20, maximum drawdown of \(-0.14\), and Calmar of 2.16—substantially ahead of the Baseline (Sharpe 0.56, Calmar 0.44). Mid-range windows such as \(n_{\text{steps}}=15\) with \(n_{\text{paths}}=12,16\) also offer a solid return–risk trade-off.
+Short windows with more paths perform best. In particular, \(n_{\text{steps}}=5\) with \(n_{\text{paths}}\in\{16,20\}\) leads. The top configuration, \(n_{\text{steps}}=5, n_{\text{paths}}=20\), reaches a Sharpe of 1.44 with annualised volatility of 0.20, maximum drawdown \(-0.14\), and Calmar 2.16. By contrast, the Baseline records a Sharpe of 0.56 and a Calmar of 0.44. Meanwhile, mid-range windows—such as \(n_{\text{steps}}=15\) with \(n_{\text{paths}}\in\{12,16\}\)—also offer a solid return-risk trade-off.
 
-To avoid over-interpreting noisy configurations, we only display the top performers; several other settings (e.g., \(n_{\text{steps}}\in\{8,10\}\)) show mediocre or negative outcomes on this sample and are omitted. In practice, implementation should additionally account for switching frequency and transaction costs (cf. the switch-rate diagnostics), which affect realizable net returns and capacity. Overall, the walk-forward state signal combined with our overlay framework improves risk-adjusted performance, with “shorter steps + more paths” being the most effective pattern in this dataset.
+We assess significance against zero using Newey--West (HAC, Bartlett kernel; data-driven lag) t-statistics on daily excess returns (See Appendix \ref{sec:newey-west}).
+We then build 95\% moving-block bootstrap confidence intervals (block = 10 days, $B=2000$) for annualized return and Sharpe on the unified calendar.
+Table~\ref{tab:sig_compact} reports the Baseline and the top five overlays by Sharpe.
+As shown, \emph{Overlay (5,20)} is significant versus zero; both confidence intervals lie strictly above zero.
+\emph{Overlay (5,16)} is marginally significant.
+By contrast, the Baseline and the remaining overlays are not significant at the 5\% level, with intervals overlapping zero.
 
+\begin{table}[t]
+\centering
+\caption{Significance vs.\ zero: NW $t$ on daily mean excess, and 95\% block-bootstrap CIs. Rates in decimals (e.g., 0.20 = 20\%).}
+\label{tab:sig_compact}
+\small
+\begin{tabular}{lccccc}
+\toprule
+Strategy & NW $t$ (mean) & AnnRet (pt) & AnnRet [2.5\%,97.5\%] & Sharpe (pt) & Sharpe [2.5\%,97.5\%] \\
+\midrule
+Baseline        & 1.29 & 0.24 & [$-0.18$, $0.90$] & 0.58 & [$-0.35$, $1.80$] \\
+Overlay (5,20)  & 2.67 & 0.33 & [$0.08$,  $0.64$] & 1.46 & [$0.48$,  $2.48$] \\
+Overlay (5,16)  & 2.01 & 0.24 & [$0.01$,  $0.54$] & 1.00 & [$0.13$,  $2.10$] \\
+Overlay (15,12) & 1.58 & 0.15 & [$-0.05$, $0.40$] & 0.89 & [$-0.20$, $1.96$] \\
+Overlay (15,16) & 1.54 & 0.16 & [$-0.05$, $0.43$] & 0.85 & [$-0.18$, $1.88$] \\
+Overlay (5,8)   & 1.53 & 0.17 & [$-0.07$, $0.47$] & 0.81 & [$-0.25$, $1.90$] \\
+\bottomrule
+\end{tabular}
+\end{table}
 
+Several other settings (e.g., \(n_{\text{steps}}\in\{8,10\}\)) are mediocre or negative in this sample and are omitted. In practice, implementation should also account for switching frequency and transaction costs (see the switch-rate diagnostics), since these frictions affect net returns and capacity. Overall, the walk-forward state signal, when combined with our overlay, improves risk-adjusted performance, with “shorter steps + more paths” as the most effective pattern in this dataset.
 
 
 \section{Transaction-cost modeling and impact}\label{sec:tc}
-We incorporate trading costs in a simple and transparent way that is consistent with our portfolio construction and evaluation:
 
-On each trading day \(t\) we form target portfolio weights \(w_t\) (long equal-weight followers, short equal-weight leaders). Trading volume is proxied by the absolute change in target weights,
+We model transaction costs in a simple, transparent way that matches our portfolio construction and evaluation. First, on each trading day \(t\) we form target portfolio weights \(w_t\) (long equal-weight followers; short equal-weight leaders). Next, we proxy trading volume with the absolute change in target weights.
 \[
 \text{turnover}_t = \sum_i \lvert w_{t,i} - w_{t-1,i}\rvert.
 \]
-A per-side fee of \(c\) bps is applied to this turnover, yielding a daily cost
+We then apply a per-side fee of \(c\) basis points to this turnover, which yields the daily cost
 \[
 \text{cost}_t = (c\times 10^{-4})\;\text{turnover}_t.
 \]
-Net returns are computed in \emph{simple-return} space as
+Consequently, we compute net returns in \emph{simple-return} space as
 \(r^{\text{net}}_t = r^{\text{gross}}_t - \text{cost}_t\).
-We charge the first trade (i.e., initial portfolio formation), and use the \emph{target-diff} mechanic; a \emph{full-rebalance} variant that also accounts for drift back to equal weights leads to higher costs and is reported when noted.
-
-%All performance statistics are computed on a unified daily calendar (crypto annualization factor \(=365\)), aligning signal days to next-trading-day returns. Turnover and its annualization are properties of the trading rule and therefore do not depend on the bps setting itself.
+We charge for the first trade (initial portfolio formation) and use the \emph{target-diff} mechanic. %For completeness, a \emph{full-rebalance} variant that also offsets drift back to equal weights produces higher costs and is reported when noted.
 
 \begin{table}
-\caption{Baseline transaction-cost sensitivity (per side, applied to target weight changes).}
+\caption{Baseline transaction-cost sensitivity (per side, applied to target-weight changes).}
 \label{tab:baseline_tc}
 \small
 \centering
@@ -206,11 +214,11 @@ Cost (bps/side) & Sharpe & AnnRet (\%) & Vol (\%) & MaxDD (\%) \\
 \end{tabular}
 \end{table}
 
-
-
 \begin{table}
-\caption{Transaction-cost sensitivity. Costs are per side, applied to target weight changes.}
+\caption{Transaction-cost sensitivity. Costs are per side, applied to target-weight changes.}
 \label{tab:tc_sensitivity_reduced}
+\small
+\centering
 \begin{tabular}{lrrrr}
 \toprule
 Strategy (params) & Sharpe & AnnRet (\%) & Vol (\%) & MaxDD (\%) \\
@@ -235,16 +243,11 @@ Strategy (params) & Sharpe & AnnRet (\%) & Vol (\%) & MaxDD (\%) \\
 \params{15}{12} & -0.931 & -24.35 & 26.28 & -68.04 \\
 \params{15}{16} & -0.892 & -23.39 & 26.07 & -66.77 \\
 \params{5}{8} & -1.038 & -26.80 & 26.62 & -68.02 \\
-\addlinespace
 \bottomrule
 \end{tabular}
 \end{table}
 
-
-Costs erode performance roughly in proportion to the annualized turnover. For the Baseline (Table~\ref{tab:baseline_tc}), Sharpe declines from \(0.58\) at \(0\) bps to \(0.32\) at \(5\) bps, and turns negative by \(10\) bps; the break-even therefore lies between \(5\)–\(10\) bps under the \textit{target-diff} mechanic. For the best overlay configurations (Table~\ref{tab:tc_sensitivity}), the impact is milder thanks to lower average daily turnover (\(\sim1.16\)–\(1.30\) vs. Baseline \(1.77\)): e.g., \(n_{\text{steps}}=5, n_{\text{paths}}=20\) remains attractive at \(5\)–\(10\) bps (Sharpe \(1.05 \to 0.67\)), but performance compresses sharply beyond \(25\) bps. Volatility is largely unchanged across bps grids (as expected), while max drawdowns deepen as net returns are shaved each day. At high frictions, all configurations become economically unviable, with NAVs collapsing toward unity.
-
-
-
+Costs erode performance roughly in line with annualised turnover. For the Baseline (Table~\ref{tab:baseline_tc}), sharpe drops from \(0.58\) at \(0\) bps to \(0.32\) at \(5\) bps, and turns negative by \(10\) bps. Therefore, the break-even lies between \(5\) and \(10\) bps under the \emph{target-diff} mechanic. By contrast, the best overlay configurations (Table~\ref{tab:tc_sensitivity_reduced}) suffer a milder hit thanks to lower average daily turnover (\(\sim1.16\)–\(1.30\) vs.\ Baseline \(1.77\)). For example, \(n_{\text{steps}}=5, n_{\text{paths}}=20\) remains attractive at \(5\)–\(10\) bps (Sharpe \(1.05 \to 0.67\)), yet performance compresses sharply beyond \(25\) bps. As expected, volatility is largely unchanged across bps grids, while maximum drawdowns deepen as net returns are shaved each day. At high frictions, all configurations become economically unviable, and NAVs converge toward unity.
 
 
 % --------- OPTIONAL (comment out if not needed now) ----------
