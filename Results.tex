@@ -155,7 +155,7 @@ First, we evaluate candidate parameterisations in a \emph{strict walk-forward} s
 
 Short windows with more paths perform best. In particular, \(n_{\text{steps}}=5\) with \(n_{\text{paths}}\in\{16,20\}\) leads. The top configuration, \(n_{\text{steps}}=5, n_{\text{paths}}=20\), reaches a Sharpe of 1.44 with annualised volatility of 0.20, maximum drawdown \(-0.14\), and Calmar 2.16. By contrast, the Baseline records a Sharpe of 0.56 and a Calmar of 0.44. Meanwhile, mid-range windows—such as \(n_{\text{steps}}=15\) with \(n_{\text{paths}}\in\{12,16\}\)—also offer a solid return-risk trade-off.
 
-We assess significance against zero using Newey--West (HAC, Bartlett kernel; data-driven lag) t-statistics on daily excess returns (See Appendix \ref{sec:newey-west}).
+We assess significance against zero using Newey--West (HAC, Bartlett kernel; data-driven lag) t-statistics \cite{NeweyWest1994} on daily excess returns (See Appendix \ref{sec:newey-west}).
 We then build 95\% moving-block bootstrap confidence intervals (block = 10 days, $B=2000$) for annualized return and Sharpe on the unified calendar.
 Table~\ref{tab:sig_compact} reports the Baseline and the top five overlays by Sharpe.
 As shown, \emph{Overlay (5,20)} is significant versus zero; both confidence intervals lie strictly above zero.
